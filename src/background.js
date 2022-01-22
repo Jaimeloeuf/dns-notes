@@ -8,7 +8,6 @@ chrome.runtime.onInstalled.addListener((installationObject) => {
   contextMenu.createContextMenus();
 });
 
-chrome.contextMenus.onClicked.addListener(async function (info, tab) {
-  console.log("info", info);
-  const { id, incognito } = tab;
-});
+chrome.contextMenus.onClicked.addListener(
+  contextMenu.contextMenuOnclickHandler
+);
