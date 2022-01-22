@@ -5,9 +5,9 @@ chrome.runtime.onInstalled.addListener((installationObject) => {
     console.log("DNS-Notes installed");
   }
 
+  // Create context menus only on install so it only run once
+  // https://developer.chrome.com/docs/extensions/mv3/service_workers/#initialization
   contextMenu.createContextMenus();
 });
 
-chrome.contextMenus.onClicked.addListener(
-  contextMenu.contextMenuOnclickHandler
-);
+contextMenu.registerOnclickHandler();
