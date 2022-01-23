@@ -10,4 +10,12 @@ chrome.runtime.onInstalled.addListener((installationObject) => {
   contextMenu.createContextMenus();
 });
 
+// @todo Should this be inside the on install thing also???
 contextMenu.registerOnclickHandler();
+
+chrome.omnibox.onInputEntered.addListener(function (text) {
+  // Encode user input for special characters , / ? : @ & = + $ #
+  const newURL =
+    "https://dns-notes.enkeldigital.com/search?q=" + encodeURIComponent(text);
+  chrome.tabs.create({ url: newURL });
+});
