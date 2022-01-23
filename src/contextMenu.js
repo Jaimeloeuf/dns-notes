@@ -26,9 +26,25 @@ function createContextMenus() {
   });
 }
 
-function createNote() {}
-function viewNote() {}
-function viewAllNotes() {}
+// Create tab manually instead of opening options page with the method to set a custom SPA path
+// chrome.runtime.openOptionsPage();
+// Right now the app is hosted as the options page, but it can be changed to a standalone app
+const openApp = (path) =>
+  chrome.tabs.create({
+    url: chrome.runtime.getURL(`src/options.html#` + path),
+  });
+
+function createNote({ hostname, selectionText, tab }) {
+  openApp(`/create?hostname=${hostname}&name=${selectionText}`);
+}
+
+function viewNote({ hostname, selectionText, tab }) {
+  openApp(`/search?hostname=${hostname}&name=${selectionText}`);
+}
+
+function viewAllNotes({ hostname, tab }) {
+  openApp(`/search?hostname=${hostname}`);
+}
 
 const registerOnclickHandler = () =>
   chrome.contextMenus.onClicked.addListener(async function (info, tab) {
@@ -36,9 +52,15 @@ const registerOnclickHandler = () =>
     const { pageUrl, menuItemId, selectionText } = info;
 
     // Create the context object for the individual callback functions from info values and tab
-    const context = { pageUrl, menuItemId, selectionText, tab };
+    const context = {
+      // https://stackoverflow.com/questions/6725890/location-host-vs-location-hostname-and-cross-browser-compatibility
+      hostname: new URL(pageUrl).hostname,
 
-    switch (info.menuItemId) {
+      selectionText,
+      tab,
+    };
+
+    switch (menuItemId) {
       case "cm-create":
         return createNote(context);
 
