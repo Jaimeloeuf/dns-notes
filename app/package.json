@@ -1,0 +1,20 @@
+{
+  "name": "dns-notes-app",
+  "version": "0.0.0",
+  "scripts": {
+    "serve": "vite --port 8080",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "bulma": "^0.9.3",
+    "simpler-fetch": "^6.0.0",
+    "vue": "^3.2.16",
+    "vue-router": "^4.0.12",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.9.3",
+    "vite": "^2.6.4"
+  }
+}
