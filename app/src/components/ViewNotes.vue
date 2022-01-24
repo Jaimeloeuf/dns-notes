@@ -2,45 +2,48 @@
   <div class="px-5 py-5">
     <div class="columns is-multiline">
       <div class="column is-full">
-        <p class="title is-3">Book a viewing slot!</p>
+        <p class="title is-3">Notes</p>
       </div>
 
       <div class="column is-full">
         <div class="card px-5">
           <div class="card-content content">
-            <p class="subtitle is-4">Select a date</p>
+            <p class="subtitle is-4">Select to edit</p>
 
-            <div v-for="(date, i) in datesAvailable" :key="i">
-              <div
-                class="level is-mobile my-4"
-                style="cursor: pointer"
-                @click="selectDate(date)"
-              >
-                <div class="level-left">
-                  <div class="level-item">
-                    {{ toWeekday(i, new Date(date.date)) }}
-                  </div>
-                </div>
+            <table>
+              <tr>
+                <!-- Which DNS provider is this record stored in -->
+                <th>DNS provider</th>
 
-                <div class="level-right">
-                  <div class="level-item">
-                    {{ new Date(date.date).getDate() }}
+                <!-- Which domain is this record for -->
+                <th>Domain</th>
 
-                    {{
-                      new Date(date.date).toLocaleString("default", {
-                        month: "long",
-                      })
-                    }}
-                  </div>
-                </div>
-              </div>
+                <!-- Type of DNS record, can be A/AAAA/CNAME/TXT -->
+                <th>Record Type</th>
 
-              <!-- @todo Why is the HR alternating in boldness? -->
-              <hr style="background-color: #dedede" />
-            </div>
+                <!-- The domain or subdomain you are pointing. Use '@' for your plain domain (e.g. coolexample.com). Don't input your domain name in this field (e.g. 'www', not 'www.coolexample.com'). -->
+                <th>Name</th>
 
-            <button class="button is-light is-fullwidth" @click="getMoreDates">
-              See More Available Dates
+                <!-- The destination of the record - the value varies based on the record type.
+                This is optional as sometimes the value is dynamic or always changing -->
+                <th>Value</th>
+
+                <!-- Note for this particular record -->
+                <th>Note</th>
+              </tr>
+
+              <tr v-for="(note, i) in notes" :key="i">
+                <td>{{ note.provider }}</td>
+                <td>{{ note.domain }}</td>
+                <td>{{ note.type }}</td>
+                <td>{{ note.name }}</td>
+                <td>{{ note.value ? note.value : "--NIL--" }}</td>
+                <td>{{ note.note }}</td>
+              </tr>
+            </table>
+
+            <button class="button is-light is-fullwidth" @click="loadMore">
+              Load more
             </button>
           </div>
         </div>
@@ -58,11 +61,11 @@ const isToday = (someDate, today = new Date()) =>
   someDate.getFullYear() == today.getFullYear();
 
 export default {
-  name: "Booking",
+  name: "ViewNotes",
 
   props: ["src"],
 
-  computed: mapState(["datesAvailable"]),
+  computed: mapState(["notes"]),
 
   methods: {
     async loadDates(after) {
@@ -71,7 +74,7 @@ export default {
       this.$store.commit("loading", false);
     },
 
-    async getMoreDates() {
+    async loadMore() {
       this.loadDates(
         // Get the last date in available dates to get more timeslots after that date
         // SADLY SAFARI does not support .at() ... smh
@@ -91,8 +94,8 @@ export default {
     },
 
     selectDate(date) {
-      this.$store.commit("setter", ["selectedDate", date]);
-      this.$router.push({ name: "select-timeslot" });
+      // this.$store.commit("setter", ["selectedDate", date]);
+      // this.$router.push({ name: "select-timeslot" });
     },
   },
 };

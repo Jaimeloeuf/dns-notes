@@ -1,5 +1,5 @@
 <template>
-  <div class="px-5 py-5">
+  <div class="px-5 py-5" style="max-width: 36em">
     <div class="columns is-multiline box">
       <div class="column is-full">
         <p class="title is-3">Create new note</p>

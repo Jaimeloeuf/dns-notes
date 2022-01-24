@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import Booking from "./components/Booking.vue";
+import Home from "./components/Home.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -20,8 +20,8 @@ const router = createRouter({
     // @todo Change this to a home UI
     {
       path: "/",
-      name: "booking",
-      component: Booking,
+      name: "home",
+      component: Home,
       // Pass URL query parameters as prop to component
       props: (route) => route.query,
     },
