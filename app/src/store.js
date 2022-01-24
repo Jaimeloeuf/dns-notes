@@ -1,12 +1,6 @@
 import { createStore } from "vuex";
 import { oof } from "simpler-fetch";
 
-// Set baseUrl before using in actions
-oof._baseUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://api.ministryofpup.com"
-    : "http://localhost:3000";
-
 export default createStore({
   state() {
     return {
