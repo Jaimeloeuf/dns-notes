@@ -45,12 +45,12 @@
                   </option>
 
                   <option
-                    v-for="type in recordTypes"
-                    :value="type"
-                    :key="type"
-                    :selected="type === recordType"
+                    v-for="recordType in recordTypes"
+                    :value="recordType"
+                    :key="recordType"
+                    :selected="recordType === type"
                   >
-                    {{ type }}
+                    {{ recordType }}
                   </option>
                 </select>
               </div>
@@ -96,13 +96,13 @@
             </label>
           </div>
 
-          <div class="column is-half">
+          <div class="column is-narrow">
             <button class="button is-fullwidth py-5" @click="$router.back">
               Cancel
             </button>
           </div>
 
-          <div class="column is-half">
+          <div class="column">
             <button
               class="button is-fullwidth py-5 is-light is-success"
               @click="create"
@@ -130,21 +130,25 @@ export default {
       value: undefined,
       note: undefined,
 
-      recordType: undefined,
+      type: undefined,
       recordTypes: ["CNAME", "A", "AAAA", "TXT", "MX"],
     };
   },
 
   methods: {
     async create() {
-      window.localStorage.setItem("test", {
+      this.$store.commit("loading", true);
+      await this.$store.dispatch("newNote", {
         provider: this.provider,
         domain: this.domain,
         subdomain: this.subdomain,
         value: this.value,
         note: this.note,
-        recordType: this.recordType,
+        type: this.type,
       });
+      this.$store.commit("loading", false);
+
+      this.$router.push({ name: "view" });
     },
   },
 };
