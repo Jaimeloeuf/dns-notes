@@ -9,6 +9,7 @@
   "dependencies": {
     "bulma": "^0.9.3",
     "firebase": "^9.6.4",
+    "fuse.js": "^6.5.3",
     "simpler-fetch": "^6.0.0",
     "vue": "^3.2.16",
     "vue-router": "^4.0.12",
