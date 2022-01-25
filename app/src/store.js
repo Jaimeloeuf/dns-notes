@@ -1,8 +1,12 @@
 import { createStore } from "vuex";
+import createPersistedState from "vuex-persistedstate";
+
 import { getAuthHeader } from "./firebase.js";
 import { oof } from "simpler-fetch";
 
 export default createStore({
+  plugins: [createPersistedState()],
+
   state() {
     return {
       // Shared global loading flag to show/hide loader in App.vue
