@@ -1,8 +1,14 @@
 <template>
   <div class="px-5 py-5">
     <div class="columns is-multiline">
-      <div class="column is-full">
+      <div class="column">
         <p class="title is-3">Notes</p>
+      </div>
+
+      <div class="column is-narrow">
+        <button class="button is-light is-fullwidth" @click="$router.back">
+          Back
+        </button>
       </div>
 
       <div class="column is-full">
@@ -22,7 +28,7 @@
                 <th>Record Type</th>
 
                 <!-- The domain or subdomain you are pointing. Use '@' for your plain domain (e.g. coolexample.com). Don't input your domain name in this field (e.g. 'www', not 'www.coolexample.com'). -->
-                <th>Name</th>
+                <th>Subdomain</th>
 
                 <!-- The destination of the record - the value varies based on the record type.
                 This is optional as sometimes the value is dynamic or always changing -->
@@ -36,8 +42,9 @@
                 <td>{{ note.provider }}</td>
                 <td>{{ note.domain }}</td>
                 <td>{{ note.type }}</td>
-                <td>{{ note.name }}</td>
-                <td>{{ note.value ? note.value : "--NIL--" }}</td>
+                <td>{{ note.subdomain }}</td>
+                <td v-if="note.value">{{ note.value }}</td>
+                <td v-else><b>null</b></td>
                 <td>{{ note.note }}</td>
               </tr>
             </table>

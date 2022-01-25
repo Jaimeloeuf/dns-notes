@@ -39,7 +39,7 @@
               <br />
 
               <div class="select is-fullwidth">
-                <select v-on:change="(event) => (src = event.target.value)">
+                <select v-on:change="(event) => (type = event.target.value)">
                   <option hidden disabled selected value>
                     Please select an option
                   </option>
