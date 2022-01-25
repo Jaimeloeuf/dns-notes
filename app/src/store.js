@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import { getAuthHeader } from "./firebase.js";
 import { oof } from "simpler-fetch";
 
 export default createStore({
@@ -7,6 +8,8 @@ export default createStore({
       // Shared global loading flag to show/hide loader in App.vue
       loading: false,
 
+      // @todo To delete the UI testing data once complete
+      // notes: []
       notes: [
         {
           provider: "cloudflare",
@@ -29,13 +32,17 @@ export default createStore({
   },
 
   mutations: {
-    // Mutation to update the shared global loading state
-    loading: (state, loadingState) => (state.loading = loadingState),
-
     // Generic mutation to set anything in state
     setter: (state, payload) => (state[payload[0]] = payload[1]),
 
-    setAvailableDates: (state, dates) => state.datesAvailable.push(...dates),
+    // Mutation to update the shared global loading state
+    loading: (state, loadingState) => (state.loading = loadingState),
+
+    // Mutation to add a single new note by prepending to the notes array
+    addNewNote: (state, note) => (state.notes = [note, ...state.notes]),
+
+    // Mutation to get older and older notes to append to the array
+    setNotes: (state, notes) => state.notes.push(...notes),
   },
 
   actions: {
@@ -46,7 +53,7 @@ export default createStore({
             ? `/appointment/available/date?after=${after}`
             : "/appointment/available/date"
         )
-        .header({})
+        .header(await getAuthHeader())
         .runJSON();
 
       // If the API call failed, recursively dispatch itself again if user wants to retry,
@@ -57,56 +64,20 @@ export default createStore({
           dispatch("loadDates", after)
         );
 
-      if (res.timeslots.length === 0)
-        return alert("Sorry but there are no more available dates!");
+      if (res.notes.length === 0) return alert("All notes loaded!");
 
-      commit("setAvailableDates", res.timeslots);
+      commit("setNotes", res.notes);
     },
 
-    async book({ commit, dispatch, state }) {
+    async newNote({ commit, dispatch }, note) {
+      // @todo Temporarily saving the note locally without any API sync first
+      return commit("addNewNote", note);
+
       try {
         const res = await oof
-          .POST("/appointment/book")
-          .header({})
-          .data({
-            time: state.selectedTimeslot,
-            src: state.src,
-
-            // Add in these fields to submit
-            // fname / lname / number / email / preference / referralCode
-            ...state.details,
-          })
-          .runJSON();
-
-        // If the API call failed, recursively dispatch itself again if user wants to retry,
-        // And always make sure that this method call ends right here by putting it in a return expression
-        if (!res.ok)
-          return (
-            confirm(`Error: \n${res.error}\n\nTry again?`) && dispatch("book")
-          );
-
-        commit("setter", ["appointmentID", res.appointmentID]);
-
-        // Return true to indicate that appointment was successfully booked
-        return true;
-      } catch (error) {
-        // For errors that cause API call itself to throw
-        console.error(error);
-
-        // If the API call failed, recursively dispatch itself again if user wants to retry,
-        // And always make sure that this method call ends right here by putting it in a return expression
-        return (
-          confirm(`Error: \n${error.message}\n\nTry again?`) && dispatch("book")
-        );
-      }
-    },
-
-    async reschedule({ commit, dispatch, state }) {
-      try {
-        const res = await oof
-          .POST(`/appointment/reschedule/${state.appointmentID}`)
-          .header({})
-          .data({ time: state.selectedTimeslot })
+          .POST("/note/new")
+          .header(await getAuthHeader())
+          .data({ note })
           .runJSON();
 
         // If the API call failed, recursively dispatch itself again if user wants to retry,
@@ -114,8 +85,10 @@ export default createStore({
         if (!res.ok)
           return (
             confirm(`Error: \n${res.error}\n\nTry again?`) &&
-            dispatch("reschedule")
+            dispatch("newNote")
           );
+
+        commit("addNewNote", note);
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
@@ -124,15 +97,15 @@ export default createStore({
         // And always make sure that this method call ends right here by putting it in a return expression
         return (
           confirm(`Error: \n${error.message}\n\nTry again?`) &&
-          dispatch("reschedule")
+          dispatch("newNote")
         );
       }
     },
 
-    async cancel({ dispatch }, appointmentID) {
+    async deleteNote({ dispatch }, noteID) {
       const res = await oof
-        .POST(`/appointment/cancel/${appointmentID}`)
-        .header({})
+        .POST(`/note/delete/${noteID}`)
+        .header(await getAuthHeader())
         .runJSON();
 
       // If the API call failed, recursively dispatch itself again if user wants to retry,
@@ -140,7 +113,7 @@ export default createStore({
       if (!res.ok)
         return (
           confirm(`Error: \n${res.error}\n\nTry again?`) &&
-          dispatch("cancel", appointmentID)
+          dispatch("deleteNote", noteID)
         );
     },
   },
