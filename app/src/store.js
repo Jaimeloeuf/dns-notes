@@ -13,9 +13,10 @@ export default createStore({
       loading: false,
 
       // @todo To delete the UI testing data once complete
-      // notes: []
-      notes: [
-        {
+      // notes: {}
+      notes: {
+        sldgjldskjglsd: {
+          id: "sldgjldskjglsd",
           provider: "cloudflare",
           domain: "covid.gov.sg",
           type: "CNAME",
@@ -24,7 +25,8 @@ export default createStore({
           note: "Domain verification for Emails",
           time: 1643184535,
         },
-        {
+        rwihfnldbxf: {
+          id: "rwihfnldbxf",
           provider: "route53",
           domain: "redeem.gov.sg",
           type: "CNAME",
@@ -33,8 +35,13 @@ export default createStore({
           note: "Domain verification for Emails",
           time: 1643184537,
         },
-      ],
+      },
     };
+  },
+
+  getters: {
+    notes: (state) =>
+      Object.values(state.notes).sort((a, b) => b.time - a.time),
   },
 
   mutations: {
@@ -45,10 +52,10 @@ export default createStore({
     loading: (state, loadingState) => (state.loading = loadingState),
 
     // Mutation to add a single new note by prepending to the notes array
-    addNewNote: (state, note) => (state.notes = [note, ...state.notes]),
+    addNewNote: (state, note) => (state.notes[note.id] = note),
 
     // Mutation to get older and older notes to append to the array
-    setNotes: (state, notes) => state.notes.push(...notes),
+    setNotes: (state, notes) => (state.notes = { ...state.notes, ...notes }),
   },
 
   actions: {
@@ -94,6 +101,7 @@ export default createStore({
             dispatch("newNote")
           );
 
+        // Might need someway to update the ID? Like get the ID back then inject into the object
         commit("addNewNote", note);
       } catch (error) {
         // For errors that cause API call itself to throw

@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 import Fuse from "fuse.js";
 
 const isToday = (someDate, today = new Date()) =>
@@ -135,7 +135,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["notes"]),
+    ...mapGetters(["notes"]),
 
     // Update fuse object when search options is updated
     fuse() {

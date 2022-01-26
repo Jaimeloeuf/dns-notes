@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 const isToday = (someDate, today = new Date()) =>
   someDate.getDate() == today.getDate() &&
@@ -70,9 +70,7 @@ const isToday = (someDate, today = new Date()) =>
 export default {
   name: "ViewNotes",
 
-  props: ["src"],
-
-  computed: mapState(["notes"]),
+  computed: mapGetters(["notes"]),
 
   methods: {
     async loadDates(after) {
