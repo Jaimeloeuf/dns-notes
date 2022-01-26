@@ -22,7 +22,7 @@
                 ref="searchField"
                 type="text"
                 v-model="search_input"
-                placeholder="E.g. Acetic or Octa"
+                placeholder="E.g. www / mysubdomain / @"
                 required
                 class="input"
                 style="width: 100%"
@@ -62,15 +62,29 @@
                 <th>Note</th>
               </tr>
 
-              <tr v-for="({ item: note }, i) in results" :key="i">
-                <td>{{ note.provider }}</td>
-                <td>{{ note.domain }}</td>
-                <td>{{ note.type }}</td>
-                <td>{{ note.subdomain }}</td>
-                <td v-if="note.value">{{ note.value }}</td>
-                <td v-else><b>null</b></td>
-                <td>{{ note.note }}</td>
-              </tr>
+              <template v-if="search_input === ''">
+                <tr v-for="(note, i) in notes" :key="i">
+                  <td>{{ note.provider }}</td>
+                  <td>{{ note.domain }}</td>
+                  <td>{{ note.type }}</td>
+                  <td>{{ note.subdomain }}</td>
+                  <td v-if="note.value">{{ note.value }}</td>
+                  <td v-else><b>null</b></td>
+                  <td>{{ note.note }}</td>
+                </tr>
+              </template>
+
+              <template v-else>
+                <tr v-for="({ item: note }, i) in results" :key="i">
+                  <td>{{ note.provider }}</td>
+                  <td>{{ note.domain }}</td>
+                  <td>{{ note.type }}</td>
+                  <td>{{ note.subdomain }}</td>
+                  <td v-if="note.value">{{ note.value }}</td>
+                  <td v-else><b>null</b></td>
+                  <td>{{ note.note }}</td>
+                </tr>
+              </template>
             </table>
 
             <button class="button is-light is-fullwidth" @click="loadMore">
@@ -106,7 +120,7 @@ export default {
 
         // When to give up search. A threshold of 0.0 requires a perfect match (of both letters and location), a threshold of 1.0 would match anything
         // Default: 0.6
-        threshold: 0.5,
+        threshold: 0.7,
       },
 
       // Defaults to the URL `search` query string if there is any
