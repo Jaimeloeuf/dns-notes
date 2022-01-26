@@ -1,19 +1,27 @@
 <template>
   <div class="columns is-multiline">
-    <div class="column is-half">
+    <div class="column is-full">
+      <router-link class="button is-fullwidth" :to="{ name: 'search' }">
+        Search
+      </router-link>
+    </div>
+
+    <div class="column is-full">
       <router-link class="button is-fullwidth" :to="{ name: 'view' }">
         View all notes
       </router-link>
     </div>
 
-    <div class="column is-half">
+    <div class="column is-full">
       <router-link class="button is-fullwidth" :to="{ name: 'create' }">
         Create note
       </router-link>
     </div>
 
-    <div class="column">
-      <button class="button is-light" @click="logout">logout</button>
+    <div class="column is-full">
+      <button class="button is-light is-fullwidth" @click="logout">
+        logout
+      </button>
     </div>
   </div>
 </template>

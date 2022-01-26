@@ -3,7 +3,7 @@ import Loader from "./components/Loader.vue";
 </script>
 
 <template>
-  <div>
+  <div class="container">
     <!-- Conditionally show the loader based on the shared global loading flag -->
     <Loader v-if="$store.state.loading" />
     <router-view class="container" />
