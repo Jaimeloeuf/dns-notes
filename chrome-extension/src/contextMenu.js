@@ -1,3 +1,5 @@
+import { baseURL } from "./config.js";
+
 /**
  * Run function to create all the context menus
  */
@@ -29,17 +31,15 @@ function createContextMenus() {
 // Create tab manually instead of opening options page with the method to set a custom SPA path
 // chrome.runtime.openOptionsPage();
 // Right now the app is hosted as the options page, but it can be changed to a standalone app
-const openApp = (path) =>
-  chrome.tabs.create({
-    url: chrome.runtime.getURL(`src/options.html#` + path),
-  });
+const openApp = (path) => chrome.tabs.create({ url: baseURL + path });
 
 function createNote({ hostname, selectionText, tab }) {
   openApp(`/create?hostname=${hostname}&name=${selectionText}`);
 }
 
 function viewNote({ hostname, selectionText, tab }) {
-  openApp(`/search?hostname=${hostname}&name=${selectionText}`);
+  // openApp(`/search?hostname=${hostname}&name=${selectionText}`);
+  openApp(`/search?query=${selectionText}`);
 }
 
 function viewAllNotes({ hostname, tab }) {
