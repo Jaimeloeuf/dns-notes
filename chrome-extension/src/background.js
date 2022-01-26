@@ -1,4 +1,5 @@
 import contextMenu from "./contextMenu.js";
+import { baseURL } from "./config.js";
 
 chrome.runtime.onInstalled.addListener((installationObject) => {
   if (installationObject.reason === chrome.runtime.OnInstalledReason.INSTALL) {
@@ -13,9 +14,10 @@ chrome.runtime.onInstalled.addListener((installationObject) => {
 // @todo Should this be inside the on install thing also???
 contextMenu.registerOnclickHandler();
 
-chrome.omnibox.onInputEntered.addListener(function (text) {
-  // Encode user input for special characters , / ? : @ & = + $ #
-  const newURL =
-    "https://dns-notes.enkeldigital.com/search?q=" + encodeURIComponent(text);
-  chrome.tabs.create({ url: newURL });
-});
+// Encode user input for special characters , / ? : @ & = + $ #
+chrome.omnibox.onInputEntered.addListener((text) =>
+  // @todo Open link in current new tab instead of another tab
+  chrome.tabs.create({
+    url: `${baseURL}/search?query=${encodeURIComponent(text)}`,
+  })
+);
