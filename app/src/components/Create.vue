@@ -139,6 +139,10 @@ export default {
     async create() {
       this.$store.commit("loading", true);
       await this.$store.dispatch("newNote", {
+        // @todo Fix the ID, this needs to be from backend?
+        id: Math.random().toString(36).slice(2, 8),
+        time: unixseconds(),
+
         provider: this.provider,
         domain: this.domain,
         subdomain: this.subdomain,
