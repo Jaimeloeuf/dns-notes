@@ -38,58 +38,64 @@
       <div class="column is-full">
         <div class="card px-5">
           <div class="card-content content">
-            <p class="subtitle is-4">Select to edit</p>
+            <div v-if="search_input !== '' && results.length === 0">
+              No notes match your search input
+            </div>
 
-            <table>
-              <tr>
-                <!-- Which DNS provider is this record stored in -->
-                <th>DNS provider</th>
+            <div v-else>
+              <p class="subtitle is-4">Select to edit</p>
 
-                <!-- Which domain is this record for -->
-                <th>Domain</th>
+              <table>
+                <tr>
+                  <!-- Which DNS provider is this record stored in -->
+                  <th>DNS provider</th>
 
-                <!-- Type of DNS record, can be A/AAAA/CNAME/TXT -->
-                <th>Record Type</th>
+                  <!-- Which domain is this record for -->
+                  <th>Domain</th>
 
-                <!-- The domain or subdomain you are pointing. Use '@' for your plain domain (e.g. coolexample.com). Don't input your domain name in this field (e.g. 'www', not 'www.coolexample.com'). -->
-                <th>Subdomain</th>
+                  <!-- Type of DNS record, can be A/AAAA/CNAME/TXT -->
+                  <th>Record Type</th>
 
-                <!-- The destination of the record - the value varies based on the record type.
+                  <!-- The domain or subdomain you are pointing. Use '@' for your plain domain (e.g. coolexample.com). Don't input your domain name in this field (e.g. 'www', not 'www.coolexample.com'). -->
+                  <th>Subdomain</th>
+
+                  <!-- The destination of the record - the value varies based on the record type.
                 This is optional as sometimes the value is dynamic or always changing -->
-                <th>Value</th>
+                  <th>Value</th>
 
-                <!-- Note for this particular record -->
-                <th>Note</th>
-              </tr>
-
-              <template v-if="search_input === ''">
-                <tr v-for="(note, i) in notes" :key="i">
-                  <td>{{ note.provider }}</td>
-                  <td>{{ note.domain }}</td>
-                  <td>{{ note.type }}</td>
-                  <td>{{ note.subdomain }}</td>
-                  <td v-if="note.value">{{ note.value }}</td>
-                  <td v-else><b>null</b></td>
-                  <td>{{ note.note }}</td>
+                  <!-- Note for this particular record -->
+                  <th>Note</th>
                 </tr>
-              </template>
 
-              <template v-else>
-                <tr v-for="({ item: note }, i) in results" :key="i">
-                  <td>{{ note.provider }}</td>
-                  <td>{{ note.domain }}</td>
-                  <td>{{ note.type }}</td>
-                  <td>{{ note.subdomain }}</td>
-                  <td v-if="note.value">{{ note.value }}</td>
-                  <td v-else><b>null</b></td>
-                  <td>{{ note.note }}</td>
-                </tr>
-              </template>
-            </table>
+                <template v-if="search_input === ''">
+                  <tr v-for="(note, i) in notes" :key="i">
+                    <td>{{ note.provider }}</td>
+                    <td>{{ note.domain }}</td>
+                    <td>{{ note.type }}</td>
+                    <td>{{ note.subdomain }}</td>
+                    <td v-if="note.value">{{ note.value }}</td>
+                    <td v-else><b>null</b></td>
+                    <td>{{ note.note }}</td>
+                  </tr>
+                </template>
 
-            <button class="button is-light is-fullwidth" @click="loadMore">
-              Load more
-            </button>
+                <template v-else>
+                  <tr v-for="({ item: note }, i) in results" :key="i">
+                    <td>{{ note.provider }}</td>
+                    <td>{{ note.domain }}</td>
+                    <td>{{ note.type }}</td>
+                    <td>{{ note.subdomain }}</td>
+                    <td v-if="note.value">{{ note.value }}</td>
+                    <td v-else><b>null</b></td>
+                    <td>{{ note.note }}</td>
+                  </tr>
+                </template>
+              </table>
+
+              <button class="button is-light is-fullwidth" @click="loadMore">
+                Load more
+              </button>
+            </div>
           </div>
         </div>
       </div>
