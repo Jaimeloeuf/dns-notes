@@ -65,6 +65,9 @@
 
                   <!-- Note for this particular record -->
                   <th>Note</th>
+
+                  <!-- User who created this note -->
+                  <th>Created By</th>
                 </tr>
 
                 <template v-if="search_input === ''">
@@ -76,6 +79,7 @@
                     <td v-if="note.value">{{ note.value }}</td>
                     <td v-else><b>null</b></td>
                     <td>{{ note.note }}</td>
+                    <td>{{ note.user }}</td>
                   </tr>
                 </template>
 
@@ -88,6 +92,7 @@
                     <td v-if="note.value">{{ note.value }}</td>
                     <td v-else><b>null</b></td>
                     <td>{{ note.note }}</td>
+                    <td>{{ note.user }}</td>
                   </tr>
                 </template>
               </table>

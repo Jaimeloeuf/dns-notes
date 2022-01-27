@@ -104,7 +104,7 @@ function requiredAuth(route) {
  */
 function AuthChecker(to, from, next) {
   // Get current user from firebase
-  const currentUser = auth.currentUser;
+  const { currentUser } = auth;
 
   // Get AuthStatus required for accessing the route.
   const AuthType_required_is = requiredAuth(to);

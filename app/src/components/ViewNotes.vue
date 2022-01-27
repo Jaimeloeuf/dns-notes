@@ -36,6 +36,9 @@
 
                 <!-- Note for this particular record -->
                 <th>Note</th>
+
+                <!-- User who created this note -->
+                <th>Created By</th>
               </tr>
 
               <tr v-for="(note, i) in notes" :key="i">
@@ -46,6 +49,7 @@
                 <td v-if="note.value">{{ note.value }}</td>
                 <td v-else><b>null</b></td>
                 <td>{{ note.note }}</td>
+                <td>{{ note.user }}</td>
               </tr>
             </table>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="px-5 py-5" style="max-width: 36em">
+  <div class="px-5 py-5" style="max-width: 30em">
     <div class="columns is-multiline box">
       <div class="column is-full">
         <p class="title is-3">Create new note</p>
@@ -117,6 +117,9 @@
 </template>
 
 <script>
+import unixseconds from "unixseconds";
+import { auth } from "../firebase.js";
+
 export default {
   name: "Create",
 
@@ -142,6 +145,7 @@ export default {
         // @todo Fix the ID, this needs to be from backend?
         id: Math.random().toString(36).slice(2, 8),
         time: unixseconds(),
+        user: auth.currentUser.email,
 
         provider: this.provider,
         domain: this.domain,
