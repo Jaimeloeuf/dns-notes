@@ -70,7 +70,8 @@
                   <th>Created By</th>
                 </tr>
 
-                <template v-if="search_input === ''">
+                <!-- Show all notes if there is no search input and no hostname in URL -->
+                <template v-if="search_input === '' && !this.hostname">
                   <tr v-for="(note, i) in notes" :key="i">
                     <td>{{ note.provider }}</td>
                     <td>{{ note.domain }}</td>
@@ -121,13 +122,13 @@ export default {
   name: "Search",
 
   // This search view is shareable, when shared, the URL contains a URL search `query` string, which will be the default search input
-  props: ["query"],
+  // Hostname can be passed in to filter down to all DNS records from a specific provider
+  props: ["query", "hostname"],
 
   data() {
     return {
       search_options: {
-        // @todo Can be user edited
-        keys: ["subdomain"],
+        keys: ["provider", "subdomain"],
 
         // When to give up search. A threshold of 0.0 requires a perfect match (of both letters and location), a threshold of 1.0 would match anything
         // Default: 0.6
@@ -149,9 +150,20 @@ export default {
 
     // Continously search as user input changes
     results() {
-      // Limit max number of returned search results to ensure not too many results are returned (esp for lower spec mobile devices),
-      // especially at the start of the search where alot of results will be matched when only 1 - 4 characters are entered
-      return this.fuse.search(this.search_input, { limit: 12 });
+      return this.fuse.search(
+        {
+          $and: this.hostname
+            ? this.search_input === ""
+              ? [{ provider: this.hostname }]
+              : [{ provider: this.hostname }, { subdomain: this.search_input }]
+            : [{ subdomain: this.search_input }],
+        },
+
+        // @todo Let user set this limit
+        // Limit max number of returned search results to ensure not too many results are returned (esp for lower spec mobile devices),
+        // especially at the start of the search where alot of results will be matched when only 1 - 4 characters are entered
+        { limit: 12 }
+      );
     },
   },
 
