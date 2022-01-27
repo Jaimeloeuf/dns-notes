@@ -33,6 +33,8 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 export default {
   name: "login",
 
+  props: ["redirect"],
+
   methods: {
     async login() {
       // https://firebase.google.com/docs/auth/web/google-signin
@@ -51,8 +53,12 @@ export default {
           const user = result.user;
           console.log("user", user);
 
-          // Redirect to home view
-          this.$router.push({ name: "home" });
+          // Redirect to home view if there is no redirect route passed in
+          // @todo Vue router does not work, any query params is stripped off
+          // if (this.redirect) this.$router.replace({ path: this.redirect });
+          if (this.redirect)
+            window.location = `${window.location.hostname}/#${this.redirect}`;
+          else this.$router.replace({ name: "home" });
         })
         .catch((error) => {
           // Handle Errors here.

@@ -73,6 +73,7 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
+      props: (route) => route.query,
       component: () => import("./components/Login.vue"),
       meta: { Auth_requirements: AuthType.public_only },
     },
@@ -114,7 +115,8 @@ function AuthChecker(to, from, next) {
    * @notice Hard coded routes based on authentication status or proceed to route user requested for.
    */
   // If route is auth protected and user not logged in, redirect to login page
-  if (AuthType_required_is.private && !currentUser) next({ name: "login" });
+  if (AuthType_required_is.private && !currentUser)
+    next({ name: "login", query: { redirect: to.fullPath } });
   // If route is public only and user is logged in, redirect to default private route of home
   else if (AuthType_required_is.public_only && currentUser)
     next({ name: "home" });
