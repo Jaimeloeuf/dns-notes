@@ -9,6 +9,8 @@ export default createStore({
 
   state() {
     return {
+      lastSync: 0,
+
       // Shared global loading flag to show/hide loader in App.vue
       loading: false,
 
@@ -57,18 +59,21 @@ export default createStore({
     // Mutation to remove a single new note
     deleteNote: (state, noteID) => delete state.notes[noteID],
 
+    // Mutation to edit a single note
+    editNote: (state, note) =>
+      (state.notes[note.id] = { ...state.notes[note.id], ...note }),
+
+    // Mutation to set a new last sync time
+    setLastSync: (state, lastSync) => (state.lastSync = lastSync),
+
     // Mutation to get older and older notes to append to the array
     setNotes: (state, notes) => (state.notes = { ...state.notes, ...notes }),
   },
 
   actions: {
-    async loadDates({ commit, dispatch }, after) {
+    async sync({ commit, state, dispatch }) {
       const res = await oof
-        .GET(
-          after
-            ? `/appointment/available/date?after=${after}`
-            : "/appointment/available/date"
-        )
+        .GET(`/sync/${state.lastSync}`)
         .header(await getAuthHeader())
         .runJSON();
 
@@ -76,13 +81,34 @@ export default createStore({
       // And always make sure that this method call ends right here by putting it in a return expression
       if (!res.ok)
         return (
-          confirm(`Error: \n${res.error}\n\nTry again?`) &&
-          dispatch("loadDates", after)
+          confirm(`Error: \n${res.error}\n\nTry again?`) && dispatch("sync")
         );
 
-      if (res.notes.length === 0) return alert("All notes loaded!");
+      // No edits / changes to apply
+      if (res.edits.length === 0) return;
 
-      commit("setNotes", res.notes);
+      for (const edit of res.edits)
+        switch (edit.type) {
+          case "add":
+            commit("addNewNote", edit.note);
+            break;
+
+          case "del":
+            commit("deleteNote", edit.noteID);
+            break;
+
+          case "edit":
+            commit("editNote", edit.note);
+            break;
+
+          default:
+            throw new Error(
+              `Internal Error: Invalid edit type '${edit.type}' received from sync API`
+            );
+        }
+
+      // Update last sync time only after edit has ran so in case it crashes, the edits can be re-ran
+      commit("setLastSync", res.lastSync);
     },
 
     async newNote({ commit, dispatch }, note) {
