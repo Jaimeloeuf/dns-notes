@@ -27,8 +27,6 @@
 </template>
 
 <script>
-import { auth } from "../firebase.js";
-
 export default {
   name: "Home",
 
@@ -37,7 +35,7 @@ export default {
       if (!confirm("Logout?")) return;
 
       // Signout current user
-      await auth.signOut();
+      await import("../firebase.js").then(({ auth }) => auth.signOut());
 
       // Redirect to login view
       this.$router.push({ name: "login" });
