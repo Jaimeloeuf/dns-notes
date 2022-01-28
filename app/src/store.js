@@ -14,30 +14,7 @@ export default createStore({
       // Shared global loading flag to show/hide loader in App.vue
       loading: false,
 
-      // @todo To delete the UI testing data once complete
-      // notes: {}
-      notes: {
-        sldgjldskjglsd: {
-          id: "sldgjldskjglsd",
-          provider: "cloudflare",
-          domain: "covid.gov.sg",
-          type: "CNAME",
-          subdomain: "_lnslgknlsfIOH_lsndlgdsl",
-          value: "",
-          note: "Domain verification for Emails",
-          time: 1643184535,
-        },
-        rwihfnldbxf: {
-          id: "rwihfnldbxf",
-          provider: "route53",
-          domain: "redeem.gov.sg",
-          type: "CNAME",
-          subdomain: "_23ikef_lsndlgdsl",
-          value: "",
-          note: "Domain verification for Emails",
-          time: 1643184537,
-        },
-      },
+      notes: {},
     };
   },
 
@@ -66,11 +43,14 @@ export default createStore({
     // Mutation to set a new last sync time
     setLastSync: (state, lastSync) => (state.lastSync = lastSync),
 
-    // Mutation to get older and older notes to append to the array
+    // Mutation to set all notes
     setNotes: (state, notes) => (state.notes = { ...state.notes, ...notes }),
   },
 
   actions: {
+    loadAllNotes: async (context) =>
+      import("./loadAllNotes.js").then(({ default: fn }) => fn(context)),
+
     async sync({ commit, state, dispatch }) {
       const res = await oof
         .GET(`/sync/${state.lastSync}`)
