@@ -116,7 +116,13 @@ function AuthChecker(to, from, next) {
    */
   // If route is auth protected and user not logged in, redirect to login page
   if (AuthType_required_is.private && !currentUser)
-    next({ name: "login", query: { redirect: to.fullPath } });
+    next({
+      name: "login",
+      query: {
+        // Instead of storing to.fullPath, create a new route object as fullPath will have query params stripped out
+        redirect: JSON.stringify({ path: to.path, query: to.query }),
+      },
+    });
   // If route is public only and user is logged in, redirect to default private route of home
   else if (AuthType_required_is.public_only && currentUser)
     next({ name: "home" });

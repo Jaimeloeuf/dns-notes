@@ -53,11 +53,11 @@ export default {
           const user = result.user;
           console.log("user", user);
 
-          // Redirect to home view if there is no redirect route passed in
-          // @todo Vue router does not work, any query params is stripped off
+          // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
           // if (this.redirect) this.$router.replace({ path: this.redirect });
-          if (this.redirect)
-            window.location = `${window.location.hostname}/#${this.redirect}`;
+
+          // Redirect to home view if there is no redirect route passed in
+          if (this.redirect) this.$router.replace(JSON.parse(this.redirect));
           else this.$router.replace({ name: "home" });
         })
         .catch((error) => {
