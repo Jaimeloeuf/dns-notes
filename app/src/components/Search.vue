@@ -68,6 +68,8 @@
 
                   <!-- User who created this note -->
                   <th>Created By</th>
+
+                  <th>Delete</th>
                 </tr>
 
                 <!-- Show all notes if there is no search input and no hostname in URL -->
@@ -81,6 +83,14 @@
                     <td v-else><b>null</b></td>
                     <td>{{ note.note }}</td>
                     <td>{{ note.user }}</td>
+                    <td>
+                      <button
+                        class="button is-light is-danger is-fullwidth"
+                        @click="deleteNote(note.id)"
+                      >
+                        del
+                      </button>
+                    </td>
                   </tr>
                 </template>
 
@@ -94,6 +104,14 @@
                     <td v-else><b>null</b></td>
                     <td>{{ note.note }}</td>
                     <td>{{ note.user }}</td>
+                    <td>
+                      <button
+                        class="button is-light is-danger is-fullwidth"
+                        @click="deleteNote(note.id)"
+                      >
+                        del
+                      </button>
+                    </td>
                   </tr>
                 </template>
               </table>
@@ -172,6 +190,12 @@ export default {
     clearSearchInput() {
       this.search_input = "";
       this.$refs.searchField.focus();
+    },
+
+    async deleteNote(noteID) {
+      this.$store.commit("loading", true);
+      await this.$store.dispatch("deleteNote", noteID);
+      this.$store.commit("loading", false);
     },
 
     async loadDates(after) {

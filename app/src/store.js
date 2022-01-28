@@ -51,8 +51,11 @@ export default createStore({
     // Mutation to update the shared global loading state
     loading: (state, loadingState) => (state.loading = loadingState),
 
-    // Mutation to add a single new note by prepending to the notes array
+    // Mutation to add a single new note
     addNewNote: (state, note) => (state.notes[note.id] = note),
+
+    // Mutation to remove a single new note
+    deleteNote: (state, noteID) => delete state.notes[noteID],
 
     // Mutation to get older and older notes to append to the array
     setNotes: (state, notes) => (state.notes = { ...state.notes, ...notes }),
@@ -116,19 +119,36 @@ export default createStore({
       }
     },
 
-    async deleteNote({ dispatch }, noteID) {
-      const res = await oof
-        .POST(`/note/delete/${noteID}`)
-        .header(await getAuthHeader())
-        .runJSON();
+    async deleteNote({ commit, dispatch }, noteID) {
+      // @todo Temporarily update locally without any API sync first
+      return commit("deleteNote", noteID);
 
-      // If the API call failed, recursively dispatch itself again if user wants to retry,
-      // And always make sure that this method call ends right here by putting it in a return expression
-      if (!res.ok)
+      try {
+        const res = await oof
+          .POST(`/note/delete/${noteID}`)
+          .header(await getAuthHeader())
+          .runJSON();
+
+        // If the API call failed, recursively dispatch itself again if user wants to retry,
+        // And always make sure that this method call ends right here by putting it in a return expression
+        if (!res.ok)
+          return (
+            confirm(`Error: \n${res.error}\n\nTry again?`) &&
+            dispatch("deleteNote", noteID)
+          );
+
+        commit("deleteNote", noteID);
+      } catch (error) {
+        // For errors that cause API call itself to throw
+        console.error(error);
+
+        // If the API call failed, recursively dispatch itself again if user wants to retry,
+        // And always make sure that this method call ends right here by putting it in a return expression
         return (
-          confirm(`Error: \n${res.error}\n\nTry again?`) &&
+          confirm(`Error: \n${error.message}\n\nTry again?`) &&
           dispatch("deleteNote", noteID)
         );
+      }
     },
   },
 });
