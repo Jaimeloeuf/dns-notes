@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "scripts": {
+    "docker:build": "docker build -t gcr.io/dns-notes/api -f ./.Dockerfile .",
+    "docker:push": "docker push gcr.io/dns-notes/api",
+    "deploy": "npm run docker:build && npm run docker:push",
+    "start": "node ./src/index.js",
+    "serve": "npx nodemon ./src/index.js"
+  },
+  "author": "JJ",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "@enkeldigital/firebase-admin": "^0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^14.3.2",
+    "express": "^4.17.2",
+    "express-error-middlewares": "^1.0.0",
+    "firebase-admin": "^9.12.0",
+    "firebase-auth-express-middleware": "^0.2.1",
+    "helmet": "^5.0.2",
+    "unixseconds": "^0.1.0"
+  }
+}
