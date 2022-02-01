@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, getIdToken, onAuthStateChanged } from "firebase/auth";
 
 // firebaseConfig auto generated in project settings
 const firebaseApp = initializeApp({
@@ -24,7 +24,7 @@ auth.useDeviceLanguage();
  */
 async function getAuthHeader() {
   if (auth.currentUser)
-    return { Authorization: `Bearer ${await auth.currentUser.getIdToken()}` };
+    return { Authorization: `Bearer ${await getIdToken(auth.currentUser)}` };
 }
 
 // Export only the items that will be used
