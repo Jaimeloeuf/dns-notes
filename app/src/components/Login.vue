@@ -44,14 +44,17 @@ export default {
       const auth = getAuth();
 
       signInWithPopup(auth, provider)
-        .then((result) => {
+        .then(async (result) => {
           // This gives you a Google Access Token. You can use it to access the Google API.
           // const credential = GoogleAuthProvider.credentialFromResult(result);
           // const token = credential.accessToken;
 
-          // The signed-in user info.
-          const user = result.user;
-          console.log("user", user);
+          // Get orgID and admin status from the JWT to set it into store
+          const {
+            claims: { org, admin },
+          } = await result.user.getIdTokenResult();
+          this.$store.commit("setter", ["org", org]);
+          this.$store.commit("setter", ["admin", admin]);
 
           // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
           // if (this.redirect) this.$router.replace({ path: this.redirect });
