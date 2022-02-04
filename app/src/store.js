@@ -16,6 +16,9 @@ export default createStore({
       // The orgID of the user, set during login or after first creating an org
       org: undefined,
 
+      // User's email
+      email: undefined,
+
       // Boolean if user is admin of the organization
       admin: undefined,
 

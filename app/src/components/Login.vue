@@ -52,11 +52,12 @@ export default {
         // This is the signed-in user's info
         // const user = result.user;
 
-        // Get orgID and admin status from the JWT to set it into store
+        // Get orgID, email and admin status from the JWT to set it into store
         const {
-          claims: { org, admin },
+          claims: { org, email, admin },
         } = await result.user.getIdTokenResult();
         this.$store.commit("setter", ["org", org]);
+        this.$store.commit("setter", ["email", email]);
         this.$store.commit("setter", ["admin", admin]);
 
         // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
