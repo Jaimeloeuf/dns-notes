@@ -12,13 +12,13 @@
   "author": "JJ",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "@enkeldigital/firebase-admin": "^0.1.0",
+    "@enkeldigital/firebase-admin": "^0.3.1",
     "cors": "^2.8.5",
-    "dotenv": "^14.3.2",
+    "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "express-error-middlewares": "^1.0.0",
-    "firebase-admin": "^9.12.0",
-    "firebase-auth-express-middleware": "^0.2.1",
+    "firebase-admin": "^10.0.2",
+    "firebase-auth-express-middleware": "^1.0.4",
     "helmet": "^5.0.2",
     "unixseconds": "^0.1.0"
   }
