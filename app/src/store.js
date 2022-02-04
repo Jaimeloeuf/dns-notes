@@ -60,43 +60,44 @@ export default createStore({
       import("./loadAllNotes.js").then(({ default: fn }) => fn(context)),
 
     async sync({ commit, state, dispatch }) {
-      const res = await oof
-        .GET(`/note/sync/${state.org}/${state.lastSync}`)
-        .header(await getAuthHeader())
-        .runJSON();
+      try {
+        const res = await oof
+          .GET(`/note/sync/${state.org}/${state.lastSync}`)
+          .header(await getAuthHeader())
+          .runJSON();
 
-      // If the API call failed, recursively dispatch itself again if user wants to retry,
-      // And always make sure that this method call ends right here by putting it in a return expression
-      if (!res.ok)
-        return (
-          confirm(`Error: \n${res.error}\n\nTry again?`) && dispatch("sync")
-        );
+        if (!res.ok) return failed(res.error, dispatch, "sync");
 
-      // No events / changes to apply
-      if (res.events.length === 0) return;
+        // No events / changes to apply
+        if (res.events.length === 0) return;
 
-      for (const event of res.events)
-        switch (event.type) {
-          case "add":
-            commit("addNewNote", event.note);
-            break;
+        for (const event of res.events)
+          switch (event.type) {
+            case "add":
+              commit("addNewNote", event.note);
+              break;
 
-          case "del":
-            commit("deleteNote", event.noteID);
-            break;
+            case "del":
+              commit("deleteNote", event.noteID);
+              break;
 
-          case "edit":
-            commit("editNote", event.note);
-            break;
+            case "edit":
+              commit("editNote", event.note);
+              break;
 
-          default:
-            throw new Error(
-              `Internal Error: Invalid event type '${event.type}' received from sync API`
-            );
-        }
+            default:
+              throw new Error(
+                `Internal Error: Invalid event type '${event.type}' received from sync API`
+              );
+          }
 
-      // Update last sync time only after events are ran so in case it crashes, the events can be re-ran
-      commit("setLastSync", res.lastSync);
+        // Update last sync time only after events are ran so in case it crashes, the events can be re-ran
+        commit("setLastSync", res.time);
+      } catch (error) {
+        // For errors that cause API call itself to throw
+        console.error(error);
+        return failed(res.error, dispatch, "sync");
+      }
     },
 
     async newNote({ commit, state, dispatch }, note) {
