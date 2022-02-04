@@ -23,6 +23,6 @@ contextMenu.registerOnclickHandler();
 chrome.omnibox.onInputEntered.addListener((text) =>
   // @todo Open link in current new tab instead of another tab
   chrome.tabs.create({
-    url: `${baseURL}/search?query=${encodeURIComponent(text)}`,
+    url: `${baseURL}/view?query=${encodeURIComponent(text)}`,
   })
 );

@@ -58,14 +58,8 @@ const router = createRouter({
     {
       path: "/view",
       name: "view",
-      component: () => import("./components/ViewNotes.vue"),
-      meta: { Auth_requirements: AuthType.private },
-    },
-    {
-      path: "/search",
-      name: "search",
       props: (route) => route.query,
-      component: () => import("./components/Search.vue"),
+      component: () => import("./components/ViewNotes.vue"),
       meta: { Auth_requirements: AuthType.private },
     },
 

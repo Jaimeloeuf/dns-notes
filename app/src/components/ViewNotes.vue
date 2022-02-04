@@ -11,51 +11,128 @@
         </button>
       </div>
 
+      <div class="column is-narrow">
+        <button
+          class="button is-light is-success is-fullwidth"
+          @click="refresh"
+        >
+          Refresh
+        </button>
+      </div>
+
+      <div class="column is-full">
+        <label>
+          <b>Search (by subdomain)</b>
+
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input
+                v-autofocus
+                ref="searchField"
+                type="text"
+                v-model="search_input"
+                placeholder="E.g. www / mysubdomain / @"
+                required
+                class="input"
+                style="width: 100%"
+              />
+            </div>
+            <div class="control">
+              <button class="button" @click="clearSearchInput">clear</button>
+            </div>
+          </div>
+        </label>
+      </div>
+
       <div class="column is-full">
         <div class="card px-5">
           <div class="card-content content">
-            <p class="subtitle is-4">Select to edit</p>
+            <div v-if="search_input !== '' && results.length === 0">
+              No notes match your search input
+            </div>
 
-            <table>
-              <tr>
-                <!-- Which DNS provider is this record stored in -->
-                <th>DNS provider</th>
+            <div v-else>
+              <p class="subtitle is-4">Select to edit</p>
 
-                <!-- Which domain is this record for -->
-                <th>Domain</th>
+              <table>
+                <!-- @todo
+                  Add in organization this note belongs to
+                  Add in time of note creation
+                -->
+                <tr>
+                  <!-- Which DNS provider is this record stored in -->
+                  <th>DNS provider</th>
 
-                <!-- Type of DNS record, can be A/AAAA/CNAME/TXT -->
-                <th>Record Type</th>
+                  <!-- Which domain is this record for -->
+                  <th>Domain</th>
 
-                <!-- The domain or subdomain you are pointing. Use '@' for your plain domain (e.g. coolexample.com). Don't input your domain name in this field (e.g. 'www', not 'www.coolexample.com'). -->
-                <th>Subdomain</th>
+                  <!-- Type of DNS record, can be A/AAAA/CNAME/TXT -->
+                  <th>Record Type</th>
 
-                <!-- The destination of the record - the value varies based on the record type.
+                  <!-- The domain or subdomain you are pointing. Use '@' for your plain domain (e.g. coolexample.com). Don't input your domain name in this field (e.g. 'www', not 'www.coolexample.com'). -->
+                  <th>Subdomain</th>
+
+                  <!-- The destination of the record - the value varies based on the record type.
                 This is optional as sometimes the value is dynamic or always changing -->
-                <th>Value</th>
+                  <th>Value</th>
 
-                <!-- Note for this particular record -->
-                <th>Note</th>
+                  <!-- Note for this particular record -->
+                  <th>Note</th>
 
-                <!-- User who created this note -->
-                <th>Created By</th>
-              </tr>
+                  <!-- User who created this note -->
+                  <th>Created By</th>
 
-              <tr v-for="(note, i) in notes" :key="i">
-                <td>{{ note.provider }}</td>
-                <td>{{ note.domain }}</td>
-                <td>{{ note.type }}</td>
-                <td>{{ note.subdomain }}</td>
-                <td v-if="note.value">{{ note.value }}</td>
-                <td v-else><b>null</b></td>
-                <td>{{ note.note }}</td>
-                <td>{{ note.user }}</td>
-              </tr>
-            </table>
+                  <th>Delete</th>
+                </tr>
 
-            <button class="button is-light is-fullwidth" @click="loadMore">
-              Load more
-            </button>
+                <!-- Show all notes if there is no search input and no hostname in URL -->
+                <template v-if="search_input === '' && !this.hostname">
+                  <tr v-for="(note, i) in notes" :key="i">
+                    <td>{{ note.provider }}</td>
+                    <td>{{ note.domain }}</td>
+                    <td>{{ note.type }}</td>
+                    <td>{{ note.subdomain }}</td>
+                    <td v-if="note.value">{{ note.value }}</td>
+                    <td v-else><b>null</b></td>
+                    <td>{{ note.note }}</td>
+                    <td>{{ note.user }}</td>
+                    <td>
+                      <button
+                        class="button is-light is-danger is-fullwidth"
+                        @click="deleteNote(note.id)"
+                      >
+                        del
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+
+                <template v-else>
+                  <tr v-for="({ item: note }, i) in results" :key="i">
+                    <td>{{ note.provider }}</td>
+                    <td>{{ note.domain }}</td>
+                    <td>{{ note.type }}</td>
+                    <td>{{ note.subdomain }}</td>
+                    <td v-if="note.value">{{ note.value }}</td>
+                    <td v-else><b>null</b></td>
+                    <td>{{ note.note }}</td>
+                    <td>{{ note.user }}</td>
+                    <td>
+                      <button
+                        class="button is-light is-danger is-fullwidth"
+                        @click="deleteNote(note.id)"
+                      >
+                        del
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+              </table>
+
+              <button class="button is-light is-fullwidth" @click="loadMore">
+                Load more
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -65,46 +142,82 @@
 
 <script>
 import { mapGetters } from "vuex";
-
-const isToday = (someDate, today = new Date()) =>
-  someDate.getDate() == today.getDate() &&
-  someDate.getMonth() == today.getMonth() &&
-  someDate.getFullYear() == today.getFullYear();
+import Fuse from "fuse.js";
 
 export default {
   name: "ViewNotes",
 
-  computed: mapGetters(["notes"]),
+  // This view is shareable, when shared, the URL contains a URL search `query` string, which will be the default search input
+  // Hostname can be passed in to filter down to all DNS records from a specific provider
+  props: ["query", "hostname"],
+
+  data() {
+    return {
+      search_options: {
+        keys: ["provider", "subdomain"],
+
+        // When to give up search. A threshold of 0.0 requires a perfect match (of both letters and location), a threshold of 1.0 would match anything
+        // Default: 0.6
+        threshold: 0.7,
+      },
+
+      // Defaults to the URL `search` query string if there is any
+      search_input: this.query || "",
+    };
+  },
+
+  computed: {
+    ...mapGetters(["notes"]),
+
+    // Update fuse object when search options is updated
+    fuse() {
+      return new Fuse(Object.values(this.notes), this.search_options);
+    },
+
+    // Continously search as user input changes
+    results() {
+      return this.fuse.search(
+        {
+          $and: this.hostname
+            ? this.search_input === ""
+              ? [{ provider: this.hostname }]
+              : [{ provider: this.hostname }, { subdomain: this.search_input }]
+            : [{ subdomain: this.search_input }],
+        },
+
+        // @todo Let user set this limit
+        // Limit max number of returned search results to ensure not too many results are returned (esp for lower spec mobile devices),
+        // especially at the start of the search where alot of results will be matched when only 1 - 4 characters are entered
+        { limit: 12 }
+      );
+    },
+  },
 
   methods: {
-    async loadDates(after) {
+    async refresh() {
       this.$store.commit("loading", true);
-      await this.$store.dispatch("loadDates", after);
+      await this.$store.dispatch("sync");
       this.$store.commit("loading", false);
     },
 
-    async loadMore() {
-      this.loadDates(
-        // Get the last date in available dates to get more timeslots after that date
-        // SADLY SAFARI does not support .at() ... smh
-        // state.datesAvailable.at(-1)?.date,
-        this.$store.state.datesAvailable[
-          this.$store.state.datesAvailable.length - 1
-        ]?.date
-      );
+    // Clear the search input box and re-focus on the search field
+    clearSearchInput() {
+      this.search_input = "";
+      this.$refs.searchField.focus();
     },
 
-    toWeekday(i, date) {
-      // If this is the first available date, check if it is today
-      // Only check if it is the first available date to prevent doing extra work checking the other further dates
-      return i === 0 && isToday(date)
-        ? "Today"
-        : date.toLocaleString("default", { weekday: "long" });
+    async deleteNote(noteID) {
+      this.$store.commit("loading", true);
+      await this.$store.dispatch("deleteNote", noteID);
+      this.$store.commit("loading", false);
     },
+  },
 
-    selectDate(date) {
-      // this.$store.commit("setter", ["selectedDate", date]);
-      // this.$router.push({ name: "select-timeslot" });
+  directives: {
+    // Custom directive to autofocus on a input element
+    autofocus: {
+      // Focus the element when the bound element is mounted onto the DOM
+      mounted: (element) => element.focus(),
     },
   },
 };

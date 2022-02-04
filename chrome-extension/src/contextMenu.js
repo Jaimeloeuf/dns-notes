@@ -38,12 +38,12 @@ function createNote({ hostname, selectionText, tab }) {
 }
 
 function viewNote({ hostname, selectionText, tab }) {
-  // openApp(`/search?hostname=${hostname}&name=${selectionText}`);
-  openApp(`/search?query=${selectionText}`);
+  // openApp(`/view?hostname=${hostname}&name=${selectionText}`);
+  openApp(`/view?query=${selectionText}`);
 }
 
 function viewAllNotes({ hostname, tab }) {
-  openApp(`/search?hostname=${hostname}`);
+  openApp(`/view?hostname=${hostname}`);
 }
 
 const registerOnclickHandler = () =>

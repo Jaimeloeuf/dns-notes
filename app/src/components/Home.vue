@@ -1,12 +1,6 @@
 <template>
   <div class="columns is-multiline">
     <div class="column is-full">
-      <router-link class="button is-fullwidth" :to="{ name: 'search' }">
-        Search
-      </router-link>
-    </div>
-
-    <div class="column is-full">
       <router-link class="button is-fullwidth" :to="{ name: 'view' }">
         View all notes
       </router-link>
