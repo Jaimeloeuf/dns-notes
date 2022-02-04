@@ -37,41 +37,46 @@ export default {
 
   methods: {
     async login() {
-      // https://firebase.google.com/docs/auth/web/google-signin
-      // Might add extra scope to get organization details
-      const provider = new GoogleAuthProvider();
+      try {
+        // https://firebase.google.com/docs/auth/web/google-signin
+        // Might add extra scope into Auth provider to get organization details
+        const result = await signInWithPopup(
+          getAuth(),
+          new GoogleAuthProvider()
+        );
 
-      const auth = getAuth();
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
 
-      signInWithPopup(auth, provider)
-        .then(async (result) => {
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          // const credential = GoogleAuthProvider.credentialFromResult(result);
-          // const token = credential.accessToken;
+        // This is the signed-in user's info
+        // const user = result.user;
 
-          // Get orgID and admin status from the JWT to set it into store
-          const {
-            claims: { org, admin },
-          } = await result.user.getIdTokenResult();
-          this.$store.commit("setter", ["org", org]);
-          this.$store.commit("setter", ["admin", admin]);
+        // Get orgID and admin status from the JWT to set it into store
+        const {
+          claims: { org, admin },
+        } = await result.user.getIdTokenResult();
+        this.$store.commit("setter", ["org", org]);
+        this.$store.commit("setter", ["admin", admin]);
 
-          // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
-          // if (this.redirect) this.$router.replace({ path: this.redirect });
+        // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
+        // if (this.redirect) this.$router.replace({ path: this.redirect });
 
-          // Redirect to home view if there is no redirect route passed in
-          if (this.redirect) this.$router.replace(JSON.parse(this.redirect));
-          else this.$router.replace({ name: "home" });
-        })
-        .catch((error) => {
-          // Handle Errors here.
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // The email of the user's account used.
-          const email = error.email;
-          // The AuthCredential type that was used.
-          const credential = GoogleAuthProvider.credentialFromError(error);
-        });
+        // Redirect to home view if there is no redirect route passed in
+        if (this.redirect) this.$router.replace(JSON.parse(this.redirect));
+        else this.$router.replace({ name: "home" });
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        // The email of the user's account used.
+        const email = error.email;
+
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+
+        // @todo Handle error
+      }
     },
   },
 };
