@@ -11,6 +11,15 @@
         </button>
       </div>
 
+      <div class="column is-narrow">
+        <button
+          class="button is-light is-success is-fullwidth"
+          @click="refresh"
+        >
+          Refresh
+        </button>
+      </div>
+
       <div class="column is-full">
         <label>
           <b>Search (by subdomain)</b>
@@ -46,6 +55,10 @@
               <p class="subtitle is-4">Select to edit</p>
 
               <table>
+                <!-- @todo
+                  Add in organization this note belongs to
+                  Add in time of note creation
+                -->
                 <tr>
                   <!-- Which DNS provider is this record stored in -->
                   <th>DNS provider</th>
@@ -186,6 +199,12 @@ export default {
   },
 
   methods: {
+    async refresh() {
+      this.$store.commit("loading", true);
+      await this.$store.dispatch("sync");
+      this.$store.commit("loading", false);
+    },
+
     // Clear the search input box and re-focus on the search field
     clearSearchInput() {
       this.search_input = "";
