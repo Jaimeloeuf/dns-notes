@@ -33,4 +33,25 @@ router.get(
   )
 );
 
+/**
+ * API for clients to get events for syncing
+ * @name GET /note/sync/:orgID/:lastSync
+ */
+router.get(
+  "/sync/:orgID/:lastSync",
+
+  authzMW((token, req) => req.params.orgID === token.org),
+
+  asyncWrap(async (req, res) =>
+    fs
+      .collection("events")
+      .where("org", "==", req.params.orgID)
+      .where("time", ">=", req.params.lastSync)
+      .orderBy("time", "asc")
+      .get()
+      .then((snap) => snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+      .then((events) => res.status(200).json({ events }))
+  )
+);
+
 module.exports = router;
