@@ -11,6 +11,12 @@ export default createStore({
     return {
       lastSync: 0,
 
+      // The orgID of the user, set during login or after first creating an org
+      org: undefined,
+
+      // Boolean if user is admin of the organization
+      admin: undefined,
+
       // Shared global loading flag to show/hide loader in App.vue
       loading: false,
 
@@ -53,7 +59,7 @@ export default createStore({
 
     async sync({ commit, state, dispatch }) {
       const res = await oof
-        .GET(`/sync/${state.lastSync}`)
+        .GET(`/note/sync/${state.org}/${state.lastSync}`)
         .header(await getAuthHeader())
         .runJSON();
 
@@ -64,30 +70,30 @@ export default createStore({
           confirm(`Error: \n${res.error}\n\nTry again?`) && dispatch("sync")
         );
 
-      // No edits / changes to apply
-      if (res.edits.length === 0) return;
+      // No events / changes to apply
+      if (res.events.length === 0) return;
 
-      for (const edit of res.edits)
-        switch (edit.type) {
+      for (const event of res.events)
+        switch (event.type) {
           case "add":
-            commit("addNewNote", edit.note);
+            commit("addNewNote", event.note);
             break;
 
           case "del":
-            commit("deleteNote", edit.noteID);
+            commit("deleteNote", event.noteID);
             break;
 
           case "edit":
-            commit("editNote", edit.note);
+            commit("editNote", event.note);
             break;
 
           default:
             throw new Error(
-              `Internal Error: Invalid edit type '${edit.type}' received from sync API`
+              `Internal Error: Invalid event type '${event.type}' received from sync API`
             );
         }
 
-      // Update last sync time only after edit has ran so in case it crashes, the edits can be re-ran
+      // Update last sync time only after events are ran so in case it crashes, the events can be re-ran
       commit("setLastSync", res.lastSync);
     },
 
