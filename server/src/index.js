@@ -12,13 +12,16 @@ app.use(require("cors")({ origin: "*" }));
 app.use(require("helmet")());
 
 // Base URL and also the Health probe to check if server is up without running any other logic
-app.get("/", (req, res) => res.status(200).send("URL Shortener"));
+app.get("/", (req, res) => res.status(200).send("DNS Notes API"));
 
+// Authentication Middleware applied for all routes defined after this line
 app.use(
-  "/admin/mappings",
-  require("./adminOnlyMiddleware"),
-  require("./admin.js")
+  require("firebase-auth-express-middleware").authn(
+    require("@enkeldigital/firebase-admin").auth
+  )
 );
+
+app.use("/note", require("./routes/note.js"));
 
 // Mount the 404 and 500 error handling middleware last
 app.use(_404);
