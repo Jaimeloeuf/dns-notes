@@ -62,6 +62,13 @@ const router = createRouter({
       component: () => import("./components/ViewNotes.vue"),
       meta: { Auth_requirements: AuthType.private },
     },
+    {
+      path: "/settings",
+      name: "settings",
+      // @todo To fix
+      component: () => import("./components/Home.vue"),
+      meta: { Auth_requirements: AuthType.private },
+    },
 
     /* Public routes */
     {
