@@ -4,6 +4,8 @@ import createPersistedState from "vuex-persistedstate";
 import { getAuthHeader } from "./firebase.js";
 import { oof } from "simpler-fetch";
 
+import { syncPost, failed } from "./store-utils.js";
+
 export default createStore({
   plugins: [createPersistedState()],
 
@@ -97,69 +99,43 @@ export default createStore({
       commit("setLastSync", res.lastSync);
     },
 
-    async newNote({ commit, dispatch }, note) {
-      // @todo Temporarily saving the note locally without any API sync first
-      return commit("addNewNote", note);
-
+    async newNote({ commit, state, dispatch }, note) {
       try {
-        const res = await oof
-          .POST("/note/new")
-          .header(await getAuthHeader())
-          .data({ note })
-          .runJSON();
+        const res = await syncPost(state, { type: "add", note });
+        if (!res.ok) return failed(res.error, dispatch, "newNote");
 
-        // If the API call failed, recursively dispatch itself again if user wants to retry,
-        // And always make sure that this method call ends right here by putting it in a return expression
-        if (!res.ok)
-          return (
-            confirm(`Error: \n${res.error}\n\nTry again?`) &&
-            dispatch("newNote")
-          );
-
-        // Might need someway to update the ID? Like get the ID back then inject into the object
-        commit("addNewNote", note);
+        // Add note into state with ID from API
+        commit("addNewNote", { ...note, id: res.id });
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
-
-        // If the API call failed, recursively dispatch itself again if user wants to retry,
-        // And always make sure that this method call ends right here by putting it in a return expression
-        return (
-          confirm(`Error: \n${error.message}\n\nTry again?`) &&
-          dispatch("newNote")
-        );
+        return failed(res.error, dispatch, "newNote");
       }
     },
 
-    async deleteNote({ commit, dispatch }, noteID) {
-      // @todo Temporarily update locally without any API sync first
-      return commit("deleteNote", noteID);
-
+    async deleteNote({ commit, state, dispatch }, noteID) {
       try {
-        const res = await oof
-          .POST(`/note/delete/${noteID}`)
-          .header(await getAuthHeader())
-          .runJSON();
-
-        // If the API call failed, recursively dispatch itself again if user wants to retry,
-        // And always make sure that this method call ends right here by putting it in a return expression
-        if (!res.ok)
-          return (
-            confirm(`Error: \n${res.error}\n\nTry again?`) &&
-            dispatch("deleteNote", noteID)
-          );
+        const res = await syncPost(state, { type: "del", noteID });
+        if (!res.ok) return failed(res.error, dispatch, "deleteNote");
 
         commit("deleteNote", noteID);
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
+        return failed(res.error, dispatch, "deleteNote");
+      }
+    },
 
-        // If the API call failed, recursively dispatch itself again if user wants to retry,
-        // And always make sure that this method call ends right here by putting it in a return expression
-        return (
-          confirm(`Error: \n${error.message}\n\nTry again?`) &&
-          dispatch("deleteNote", noteID)
-        );
+    async editNote({ commit, state, dispatch }, note) {
+      try {
+        const res = await syncPost(state, { type: "edit", note });
+        if (!res.ok) return failed(res.error, dispatch, "editNote");
+
+        commit("editNote", note);
+      } catch (error) {
+        // For errors that cause API call itself to throw
+        console.error(error);
+        return failed(res.error, dispatch, "editNote");
       }
     },
   },
