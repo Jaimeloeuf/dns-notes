@@ -70,7 +70,7 @@ const router = createRouter({
       meta: { Auth_requirements: AuthType.private },
     },
 
-    /* Public routes */
+    /* Public only routes */
     {
       path: "/login",
       name: "login",
@@ -79,7 +79,13 @@ const router = createRouter({
       meta: { Auth_requirements: AuthType.public_only },
     },
 
-    // @todo Add a 404 not found
+    /* Public routes */
+    {
+      path: "/:pathMatch(.*)*",
+      name: "404",
+      component: () => import("./components/404.vue"),
+      meta: { Auth_requirements: AuthType.public },
+    },
   ],
 });
 
