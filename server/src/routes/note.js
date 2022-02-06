@@ -1,6 +1,5 @@
 /**
  * CRUD API for notes
- * Entire router will be mounted after a admin only authentication and authorization route gaurd
  * Mounted on /note
  * @author JJ
  * @module Note APIs
@@ -8,6 +7,7 @@
 
 const express = require("express");
 const router = express.Router();
+const unixseconds = require("unixseconds");
 const { asyncWrap } = require("express-error-middlewares");
 const authzMW = require("firebase-auth-express-middleware").authz;
 const fs = require("@enkeldigital/firebase-admin").fs;
@@ -29,12 +29,12 @@ router.get(
       .get()
       .then((snap) => snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
       .then((data) => data.reduce((obj, cur) => ((obj[cur.id] = cur), obj), {}))
-      .then((notes) => res.status(200).json({ notes }))
+      .then((notes) => res.status(200).json({ notes, time: unixseconds() }))
   )
 );
 
 /**
- * API for clients to get events for syncing
+ * API for clients to get events for syncing and to get a new last sync time
  * @name GET /note/sync/:orgID/:lastSync
  */
 router.get(
@@ -46,11 +46,11 @@ router.get(
     fs
       .collection("events")
       .where("org", "==", req.params.orgID)
-      .where("time", ">=", req.params.lastSync)
+      .where("time", ">=", parseInt(req.params.lastSync))
       .orderBy("time", "asc")
       .get()
       .then((snap) => snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
-      .then((events) => res.status(200).json({ events }))
+      .then((events) => res.status(200).json({ events, time: unixseconds() }))
   )
 );
 
