@@ -2,6 +2,9 @@
   Module for utilities used by the vuex store
 */
 
+import { getAuthHeader } from "./firebase.js";
+import { oof } from "simpler-fetch";
+
 /**
  * Abstraction over API call to send event data to the sync endpoint
  * @param {object} state Vuex state object to get the org ID
