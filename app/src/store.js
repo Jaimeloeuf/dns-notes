@@ -54,8 +54,9 @@ export default createStore({
     // Mutation to set a new last sync time
     setLastSync: (state, lastSync) => (state.lastSync = lastSync),
 
-    // Mutation to set all notes
-    setNotes: (state, notes) => (state.notes = { ...state.notes, ...notes }),
+    // Mutation to set all notes at once to override all previous notes
+    // Only used when you want to load all notes in with a clean state
+    setNotes: (state, notes) => (state.notes = notes),
   },
 
   actions: {
