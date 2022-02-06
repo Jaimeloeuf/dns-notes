@@ -6,27 +6,36 @@ import { oof } from "simpler-fetch";
 
 import { syncPost, failed } from "./store-utils.js";
 
+/**
+ * Function to get the default state of vuex store as a new object everytime it is called.
+ * Defined externally so that reset mutation can use this too to clear the state.
+ * @returns {object} Default vuex state object
+ */
+const defaultState = () => ({
+  // Defaults to the smallest valid time number, 0
+  // This value should be set whenever notes or events are received from the API
+  lastSync: 0,
+
+  // The orgID of the user, set during login or after first creating an org
+  org: undefined,
+
+  // User's email
+  email: undefined,
+
+  // Boolean if user is admin of the organization
+  admin: undefined,
+
+  // Shared global loading flag to show/hide loader in App.vue
+  loading: false,
+
+  notes: {},
+});
+
 export default createStore({
   plugins: [createPersistedState()],
 
   state() {
-    return {
-      lastSync: 0,
-
-      // The orgID of the user, set during login or after first creating an org
-      org: undefined,
-
-      // User's email
-      email: undefined,
-
-      // Boolean if user is admin of the organization
-      admin: undefined,
-
-      // Shared global loading flag to show/hide loader in App.vue
-      loading: false,
-
-      notes: {},
-    };
+    return defaultState();
   },
 
   getters: {
@@ -57,6 +66,8 @@ export default createStore({
     // Mutation to set all notes at once to override all previous notes
     // Only used when you want to load all notes in with a clean state
     setNotes: (state, notes) => (state.notes = notes),
+
+    reset: (state) => Object.assign(state, defaultState()),
   },
 
   actions: {
