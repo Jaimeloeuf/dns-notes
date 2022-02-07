@@ -38,9 +38,13 @@
       <div class="column is-full">
         <div class="card px-5">
           <div class="card-content content">
-            <div class="columns is-vcentered">
+            <div class="columns is-vcentered mb-6">
               <div class="column">
                 <p class="subtitle is-4">Select to edit</p>
+              </div>
+
+              <div class="column is-narrow">
+                Last sync: {{ formatTimeslot(lastSync * 1000) }}
               </div>
 
               <div class="column is-narrow">
@@ -138,8 +142,9 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Fuse from "fuse.js";
+import formatTimeslot from "../utils/formatTimeslot";
 
 export default {
   name: "ViewNotes",
@@ -165,6 +170,7 @@ export default {
 
   computed: {
     ...mapGetters(["notes"]),
+    ...mapState(["lastSync"]),
 
     // Update fuse object when search options is updated
     fuse() {
@@ -196,6 +202,8 @@ export default {
   },
 
   methods: {
+    formatTimeslot,
+
     async refresh() {
       this.$store.commit("loading", true);
       await this.$store.dispatch("sync");

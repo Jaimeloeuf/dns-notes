@@ -83,9 +83,7 @@ export default createStore({
 
         if (!res.ok) return failed(res.error, dispatch, "sync");
 
-        // No events / changes to apply
-        if (res.events.length === 0) return;
-
+        // Apply all the events / changes one by one using the various mutations
         for (const event of res.events)
           switch (event.type) {
             case "add":
