@@ -11,15 +11,6 @@
         </button>
       </div>
 
-      <div class="column is-narrow">
-        <button
-          class="button is-light is-success is-fullwidth"
-          @click="refresh"
-        >
-          Refresh
-        </button>
-      </div>
-
       <div class="column is-full">
         <label>
           <b>Search (by subdomain)</b>
@@ -47,13 +38,23 @@
       <div class="column is-full">
         <div class="card px-5">
           <div class="card-content content">
+            <div class="columns is-vcentered">
+              <div class="column">
+                <p class="subtitle is-4">Select to edit</p>
+              </div>
+
+              <div class="column is-narrow">
+                <button class="button is-light is-success" @click="refresh">
+                  Refresh
+                </button>
+              </div>
+            </div>
+
             <div v-if="search_input !== '' && results.length === 0">
               No notes match your search input
             </div>
 
             <div v-else>
-              <p class="subtitle is-4">Select to edit</p>
-
               <table>
                 <!-- @todo
                   Add in organization this note belongs to
@@ -98,7 +99,7 @@
                     <td>{{ note.user }}</td>
                     <td>
                       <button
-                        class="button is-light is-danger is-fullwidth"
+                        class="button is-light is-danger is-small"
                         @click="deleteNote(note.id)"
                       >
                         del
@@ -119,7 +120,7 @@
                     <td>{{ note.user }}</td>
                     <td>
                       <button
-                        class="button is-light is-danger is-fullwidth"
+                        class="button is-light is-danger is-small"
                         @click="deleteNote(note.id)"
                       >
                         del
@@ -128,10 +129,6 @@
                   </tr>
                 </template>
               </table>
-
-              <button class="button is-light is-fullwidth" @click="loadMore">
-                Load more
-              </button>
             </div>
           </div>
         </div>
@@ -191,6 +188,11 @@ export default {
         { limit: 12 }
       );
     },
+  },
+
+  mounted() {
+    // Run refresh method on mount everytime this page is loaded!
+    this.refresh();
   },
 
   methods: {
