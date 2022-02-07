@@ -63,6 +63,14 @@ export default {
     async logout() {
       if (!confirm("Logout?")) return;
 
+      // Clear everything in vuex state by resetting it to its default state
+      // Clearing this will also trigger plugin to clear all persisted state
+      // All data needs to be cleared so if another user logins they do not inherit any state
+      this.$store.commit("reset");
+
+      // Erase any data left in localStorage first before logging out with firebase auth
+      localStorage.clear();
+
       // Signout current user
       await import("../firebase.js").then(({ auth }) => auth.signOut());
 
