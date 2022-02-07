@@ -118,7 +118,6 @@
 
 <script>
 import unixseconds from "unixseconds";
-import { auth } from "../firebase.js";
 
 export default {
   name: "Create",
@@ -139,13 +138,14 @@ export default {
   },
 
   methods: {
+    // @todo Add try catch to recursively run until succeeded like try again
     async create() {
       this.$store.commit("loading", true);
       await this.$store.dispatch("newNote", {
-        // @todo Fix the ID, this needs to be from backend?
-        id: Math.random().toString(36).slice(2, 8),
         time: unixseconds(),
-        user: auth.currentUser.email,
+
+        user: this.$store.state.email,
+        org: this.$store.state.org,
 
         provider: this.provider,
         domain: this.domain,
