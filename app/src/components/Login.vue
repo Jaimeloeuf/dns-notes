@@ -60,6 +60,10 @@ export default {
         this.$store.commit("setter", ["email", email]);
         this.$store.commit("setter", ["admin", admin]);
 
+        // Only trigger load all notes action to run in background if user belongs to an organization
+        // Loading all notes again on login, because application state is wiped on logout.
+        if (org) this.$store.dispatch("loadAllNotes");
+
         // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
         // if (this.redirect) this.$router.replace({ path: this.redirect });
 
