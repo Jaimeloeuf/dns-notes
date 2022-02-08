@@ -68,6 +68,12 @@ const router = createRouter({
       component: () => import("./components/Settings.vue"),
       meta: { Auth_requirements: AuthType.private },
     },
+    {
+      path: "/invite",
+      name: "invite-users",
+      component: () => import("./components/InviteUsers.vue"),
+      meta: { Auth_requirements: AuthType.private },
+    },
 
     /* Public only routes */
     {
