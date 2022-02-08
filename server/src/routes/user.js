@@ -64,10 +64,10 @@ router.post(
     if (snapshot.empty)
       return res.status(400).json({ error: "No invitation found" });
 
-    const claims = require("../utils/claims.js");
     const invitation = snapshot.docs[0].data();
 
     // Set claims for user account
+    const claims = require("../utils/claims.js");
     claims.setClaimsWithEmail({
       // Only set a admin claim on JWT if admin permission is granted
       // Else do not set admin: false so that the JWT is smaller in size
