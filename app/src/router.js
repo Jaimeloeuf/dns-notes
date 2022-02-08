@@ -65,8 +65,7 @@ const router = createRouter({
     {
       path: "/settings",
       name: "settings",
-      // @todo To fix
-      component: () => import("./components/Home.vue"),
+      component: () => import("./components/Settings.vue"),
       meta: { Auth_requirements: AuthType.private },
     },
 
