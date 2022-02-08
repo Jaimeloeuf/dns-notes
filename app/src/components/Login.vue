@@ -7,20 +7,24 @@
 
       <div class="column is-full">
         <div class="columns is-multiline">
-          <div class="column is-narrow">
-            <button class="button is-fullwidth py-5" @click="$router.back">
-              Sign up
-            </button>
-          </div>
-
-          <div class="column">
+          <div class="column is-full">
             <button
               class="button is-fullwidth py-5 is-light is-success"
-              @click="login"
+              @click="login_google"
             >
               Google Login
             </button>
           </div>
+
+          <!-- Possibly other OIDC login methods -->
+          <!-- <div class="column is-full">
+            <button
+              class="button is-fullwidth py-5 is-light is-success"
+              @click="login"
+            >
+              XXX Login
+            </button>
+          </div> -->
         </div>
       </div>
     </div>
@@ -36,7 +40,7 @@ export default {
   props: ["redirect"],
 
   methods: {
-    async login() {
+    async login_google() {
       try {
         // https://firebase.google.com/docs/auth/web/google-signin
         // Might add extra scope into Auth provider to get organization details
