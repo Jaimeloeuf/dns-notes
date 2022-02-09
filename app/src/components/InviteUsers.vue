@@ -96,7 +96,7 @@
         <div class="column is-narrow">
           <a
             class="button is-light is-success is-fullwidth"
-            href="../assets/csv-template.csv"
+            href="/csv-template.csv"
             download="DNS-Notes-Bulk-Invite.csv"
           >
             Download
