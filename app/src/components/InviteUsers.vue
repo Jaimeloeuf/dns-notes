@@ -166,6 +166,7 @@
 
 <script>
 import { mapState } from "vuex";
+import parseCSV from "../utils/parseCSV.js";
 
 export default {
   name: "InviteUsers",
@@ -195,7 +196,9 @@ export default {
       });
     },
 
-    async inviteBulk() {},
+    async inviteBulk() {
+      const parsedUsers = await parseCSV(this.bulkInviteCSV);
+    },
   },
 };
 </script>
