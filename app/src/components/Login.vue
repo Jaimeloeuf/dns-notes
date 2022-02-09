@@ -71,9 +71,12 @@ export default {
         // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
         // if (this.redirect) this.$router.replace({ path: this.redirect });
 
-        // Redirect to home view if there is no redirect route passed in
+        // Redirect to redirect route if any
+        // Else if user already belong to an organization, redirect to home view
+        // Else user is a new user without any organization, redirect to new user view
         if (this.redirect) this.$router.replace(JSON.parse(this.redirect));
-        else this.$router.replace({ name: "home" });
+        else if (org) this.$router.replace({ name: "home" });
+        else this.$router.replace({ name: "new-user" });
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;

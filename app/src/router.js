@@ -63,6 +63,12 @@ const router = createRouter({
       meta: { Auth_requirements: AuthType.private },
     },
     {
+      path: "/new",
+      name: "new-user",
+      component: () => import("./components/NewUser.vue"),
+      meta: { Auth_requirements: AuthType.private },
+    },
+    {
       path: "/settings",
       name: "settings",
       component: () => import("./components/Settings.vue"),
