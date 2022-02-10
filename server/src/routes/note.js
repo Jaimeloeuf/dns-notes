@@ -91,12 +91,30 @@ router.post(
     event.user = req.authenticatedUser.email;
     event.org = req.authenticatedUser.org;
 
+    // @todo Verify shape of event objects for each and every event type
+
     switch (event.type) {
       case "add":
-        const noteRef = fs.collection("notes").doc();
-        const { id } = noteRef;
-        event.note.id = id;
-        await noteRef.set(event.note);
+        // Ensure note object exists on event object
+        if (!event.note)
+          return res
+            .status(400)
+            .json({ error: "Missing note object in event object" });
+
+        // Add note into the notes store with the firestore doc ID as the id field on the note object
+        // Then get back the updated note object with ID to set on the event object,
+        // So that the note object on the event object is the same as the note object stored in firestore.
+        //
+        // Alternative:
+        // const noteRef = fs.collection("notes").doc();
+        // const { id } = noteRef;
+        // event.note.id = id;
+        // await noteRef.set(event.note);
+        event.note = await require("../utils/saveWithID.js")(
+          fs,
+          "notes",
+          event.note
+        );
 
         // Add event into the event store
         await fs.collection("events").add(event);
