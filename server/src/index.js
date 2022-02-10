@@ -22,6 +22,7 @@ app.use(
 );
 
 app.use("/note", require("./routes/note.js"));
+app.use("/user", require("./routes/user.js"));
 app.use("/org", require("./routes/org.js"));
 app.use("/error", require("./routes/error.js"));
 
