@@ -4,7 +4,9 @@
   "scripts": {
     "serve": "vite --port 8080",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy-firebase-hosting": "firebase deploy --only hosting",
+    "deploy": "npm run build && npm run deploy-firebase-hosting"
   },
   "dependencies": {
     "bulma": "^0.9.3",
