@@ -12,17 +12,17 @@ const NewValue = (detailPropertyString) => (state, event) => ({
   [detailPropertyString]: event.target.value,
 });
 
-const getWebAppURL = () =>
+const getAppURL = () =>
   new Promise((resolve, reject) =>
-    chrome.storage.sync.get("webAppURL", ({ webAppURL }) => resolve(webAppURL))
+    chrome.storage.sync.get("appURL", ({ appURL }) => resolve(appURL))
   );
 
 app({
   init: {
-    webAppURL: await getWebAppURL(),
+    appURL: await getAppURL(),
   },
 
-  view: ({ webAppURL }) =>
+  view: ({ appURL }) =>
     h("main", {}, [
       h("h1", {}, text("DNS Notes extension options")),
 
@@ -32,8 +32,8 @@ app({
           h("input", {
             type: "text",
             placeholder: "https://app.dns-notes.enkeldigital.com/#",
-            oninput: NewValue("webAppURL"),
-            value: webAppURL,
+            oninput: NewValue("appURL"),
+            value: appURL,
             style: { width: "40em" },
           }),
         ]),

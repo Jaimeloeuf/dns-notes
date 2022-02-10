@@ -1,2 +1,7 @@
-// export const baseURL = chrome.runtime.getURL("src/options.html#");
-export const baseURL = "http://localhost:8080/#";
+export const getAppURL = (path = "/") =>
+  new Promise((resolve) =>
+    chrome.storage.sync.get("appURL", ({ appURL }) =>
+      // Get the final Web app URL by concatenating the path to base URL
+      resolve(appURL + path)
+    )
+  );
