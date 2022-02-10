@@ -31,6 +31,6 @@ export default async function loadAllNotes({ state, commit, dispatch }) {
   } catch (error) {
     // For errors that cause API call itself to throw
     console.error(error);
-    return failed(res.error, dispatch, "loadAllNotes");
+    return failed(error.message, dispatch, "loadAllNotes");
   }
 }

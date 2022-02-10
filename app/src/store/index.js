@@ -4,7 +4,7 @@ import createPersistedState from "vuex-persistedstate";
 import { getAuthHeader } from "../firebase.js";
 import { oof } from "simpler-fetch";
 
-import { syncPost, failed } from "./utils.js";
+import { lazilyLoad, syncPost, failed } from "./utils.js";
 
 /**
  * Function to get the default state of vuex store as a new object everytime it is called.
@@ -71,15 +71,16 @@ export default createStore({
   },
 
   actions: {
-    loadAllNotes: async (context) =>
-      import("./actions/loadAllNotes.js").then(({ default: fn }) =>
-        fn(context)
-      ),
+    // Could have written it like this too, but the bundler cannot analyze dynamic import calls
+    // which meant that the full paths were used even in the full builds where all resource names are mangled
+    // const lazyLoader = (path) => async (context, payload) =>
+    //   import(path /* @vite-ignore */).then(({ default: fn }) =>
+    //     fn(context, payload)
+    //   );
+    // loadAllNotes: lazyLoader("./actions/loadAllNotes.js"),
 
-    checkForInvites: async (context) =>
-      import("./actions/checkForInvites.js").then(({ default: fn }) =>
-        fn(context)
-      ),
+    loadAllNotes: lazilyLoad(() => import("./actions/loadAllNotes.js")),
+    checkForInvites: lazilyLoad(() => import("./actions/checkForInvites.js")),
 
     async sync({ commit, state, dispatch }) {
       try {
@@ -116,7 +117,7 @@ export default createStore({
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
-        return failed(res.error, dispatch, "sync");
+        return failed(error.message, dispatch, "sync");
       }
     },
 
@@ -130,7 +131,7 @@ export default createStore({
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
-        return failed(res.error, dispatch, "newNote");
+        return failed(error.message, dispatch, "newNote");
       }
     },
 
@@ -143,7 +144,7 @@ export default createStore({
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
-        return failed(res.error, dispatch, "deleteNote");
+        return failed(error.message, dispatch, "deleteNote");
       }
     },
 
@@ -156,7 +157,7 @@ export default createStore({
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
-        return failed(res.error, dispatch, "editNote");
+        return failed(error.message, dispatch, "editNote");
       }
     },
   },
