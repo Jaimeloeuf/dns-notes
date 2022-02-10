@@ -1,7 +1,7 @@
-import { getAuthHeader } from "./firebase.js";
+import { getAuthHeader } from "../../firebase.js";
 import { oof } from "simpler-fetch";
 
-import { failed } from "./store-utils.js";
+import { failed } from "../utils.js";
 
 /**
  * Vuex action to load all notes from API, reset vuex notes to be what the API returned.
@@ -21,6 +21,8 @@ export default async function loadAllNotes({ state, commit, dispatch }) {
       .runJSON();
 
     if (!res.ok) return failed(res.error, dispatch, "loadAllNotes");
+
+    console.log(res);
 
     commit("setNotes", res.notes);
 

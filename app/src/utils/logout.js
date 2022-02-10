@@ -1,5 +1,5 @@
 import router from "../router.js";
-import store from "../store.js";
+import store from "../store/index.js";
 import { auth } from "../firebase.js";
 
 export default async function logout() {

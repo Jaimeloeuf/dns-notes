@@ -1,10 +1,10 @@
 import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
 
-import { getAuthHeader } from "./firebase.js";
+import { getAuthHeader } from "../firebase.js";
 import { oof } from "simpler-fetch";
 
-import { syncPost, failed } from "./store-utils.js";
+import { syncPost, failed } from "./utils.js";
 
 /**
  * Function to get the default state of vuex store as a new object everytime it is called.
@@ -72,7 +72,9 @@ export default createStore({
 
   actions: {
     loadAllNotes: async (context) =>
-      import("./loadAllNotes.js").then(({ default: fn }) => fn(context)),
+      import("./actions/loadAllNotes.js").then(({ default: fn }) =>
+        fn(context)
+      ),
 
     async sync({ commit, state, dispatch }) {
       try {

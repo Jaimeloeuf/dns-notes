@@ -2,7 +2,7 @@
   Module for utilities used by the vuex store
 */
 
-import { getAuthHeader } from "./firebase.js";
+import { getAuthHeader } from "../firebase.js";
 import { oof } from "simpler-fetch";
 
 /**
