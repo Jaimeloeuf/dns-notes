@@ -144,6 +144,8 @@ export default {
       await this.$store.dispatch("newNote", {
         time: unixseconds(),
 
+        // @todo This needs to be verified by API too against the token
+        // The user who created it and the organization
         user: this.$store.state.email,
         org: this.$store.state.org,
 

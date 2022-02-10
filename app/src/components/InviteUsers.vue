@@ -111,7 +111,7 @@
           Sample of how to fill in the CSV template
           <br />
           <img
-            src="../assets/sample-csv-format.PNG"
+            src="/sample-csv-format.png"
             alt="Sample CSV format"
             style="width: 100%; height: auto"
           />
