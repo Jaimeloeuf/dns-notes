@@ -9,7 +9,7 @@
  * @param {object} value Whatever object value you want to save into that collection
  * @returns An updated copy of the value object you passed in with the firestore doc id set on it
  */
-module.exports.saveWithID = async function (fs, collection, value) {
+module.exports = async function saveWithID(fs, collection, value) {
   // https://firebase.google.com/docs/firestore/manage-data/add-data#node.js_6
   const ref = fs.collection(collection).doc();
   const { id } = ref;

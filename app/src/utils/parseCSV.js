@@ -22,7 +22,8 @@ function csvToArray(str) {
     const values = row.split(",");
 
     return {
-      email: values[0],
+      // Email must be lowercase as the email in tokens are all lower cased by default
+      email: values[0].toLowerCase(),
       admin: values[1].replace(/(\r\n|\n|\r|\s)/gm, "") === "y",
     };
   });

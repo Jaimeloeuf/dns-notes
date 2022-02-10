@@ -81,6 +81,10 @@ export default createStore({
 
     loadAllNotes: lazilyLoad(() => import("./actions/loadAllNotes.js")),
     checkForInvites: lazilyLoad(() => import("./actions/checkForInvites.js")),
+    acceptInvite: lazilyLoad(() => import("./actions/acceptInvite.js")),
+    rejectInvite: lazilyLoad(() => import("./actions/rejectInvite.js")),
+    inviteIndividual: lazilyLoad(() => import("./actions/inviteIndividual.js")),
+    inviteBulk: lazilyLoad(() => import("./actions/inviteBulk.js")),
 
     async sync({ commit, state, dispatch }) {
       try {

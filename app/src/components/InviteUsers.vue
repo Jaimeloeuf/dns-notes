@@ -72,11 +72,18 @@
 
             <button
               class="button is-light is-success is-fullwidth"
-              @click="invite"
+              @click="inviteIndividual"
             >
               Invite
             </button>
           </label>
+        </div>
+
+        <div class="column is-full">
+          <b>
+            *Once invited, ask user to login or reload if logged in to accept
+            invitation.
+          </b>
         </div>
       </div>
     </div>
@@ -166,7 +173,6 @@
 
 <script>
 import { mapState } from "vuex";
-import parseCSV from "../utils/parseCSV.js";
 
 export default {
   name: "InviteUsers",
@@ -189,15 +195,35 @@ export default {
       this.bulkInviteCSV = event.target.files[0];
     },
 
-    async invite() {
-      ({
-        email: this.email,
+    async inviteIndividual() {
+      this.$store.commit("loading", true);
+      await this.$store.dispatch("inviteIndividual", {
+        // Email must be lowercase as the email in tokens are all lower cased by default
+        email: this.email.toLowerCase(),
         admin: this.admin,
       });
+      this.$store.commit("loading", false);
+
+      // Reset the inputs
+      // Reset the data values to its original state by re-running the data method
+      // https://github.com/vuejs/vue/issues/702#issuecomment-308991548
+      // https://www.carlcassar.com/articles/reset-data-in-a-vue-component
+      Object.assign(this.$data, this.$options.data());
     },
 
     async inviteBulk() {
+      this.$store.commit("loading", true);
+
+      const { default: parseCSV } = await import("../utils/parseCSV.js");
       const parsedUsers = await parseCSV(this.bulkInviteCSV);
+      await this.$store.dispatch("inviteBulk", parsedUsers);
+
+      this.$store.commit("loading", false);
+
+      alert("Invites sent!");
+
+      // Remove the CSV file object to give visual feedback that transaction completed
+      this.bulkInviteCSV = undefined;
     },
   },
 };
