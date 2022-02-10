@@ -66,7 +66,19 @@ export default {
 
         // Only trigger load all notes action to run in background if user belongs to an organization
         // Loading all notes again on login, because application state is wiped on logout.
-        if (org) this.$store.dispatch("loadAllNotes");
+        //
+        // This API call might take a long time, and if user attempts to go ViewNotes API immediately,
+        // There is a chance that the sync API might be called before this API resolves.
+        // Which means that sync API will be called with lastSync time of 0, and get all events back
+        // Which might cause data corruption if app attempts to apply sync events,
+        // on the latest set of notes returned from this API call.
+        // Thus to prevent this from happening, a full screen loader is used to prevent navigation until API resolves.
+        // An alternative is to set a value in vuex, so sync action will wait fpr loadAllNotes action to complete.
+        if (org) {
+          this.$store.commit("loading", true);
+          await this.$store.dispatch("loadAllNotes");
+          this.$store.commit("loading", false);
+        }
 
         // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
         // if (this.redirect) this.$router.replace({ path: this.redirect });
