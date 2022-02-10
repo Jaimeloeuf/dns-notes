@@ -76,6 +76,11 @@ export default createStore({
         fn(context)
       ),
 
+    checkForInvites: async (context) =>
+      import("./actions/checkForInvites.js").then(({ default: fn }) =>
+        fn(context)
+      ),
+
     async sync({ commit, state, dispatch }) {
       try {
         const res = await oof

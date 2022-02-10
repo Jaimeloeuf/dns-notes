@@ -175,8 +175,19 @@ export default {
     return { tab: undefined, orgID: undefined, admin: false };
   },
 
+  mounted() {
+    // Check on mount instead of check on login so that they can just reload site to check for new invites
+    this.checkForInvites();
+  },
+
   methods: {
     logout,
+
+    async checkForInvites() {
+      this.$store.commit("loading", true);
+      await this.$store.dispatch("checkForInvites");
+      this.$store.commit("loading", false);
+    },
 
     async request() {},
 
