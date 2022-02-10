@@ -16,7 +16,7 @@
         </div>
 
         <div class="column is-full">
-          <p class="title is-4">Admin</p>
+          <p class="title is-5">Admin settings</p>
         </div>
 
         <div class="column is-full">
@@ -31,9 +31,9 @@
         <div class="column is-full">
           <router-link
             class="button is-light is-success is-fullwidth is-large"
-            :to="{ name: 'user-management' }"
+            :to="{ name: 'manage-user' }"
           >
-            User management
+            Manage Users
           </router-link>
         </div>
       </div>
@@ -44,7 +44,7 @@
     </div>
 
     <div class="column is-full">
-      <p class="title is-4">User</p>
+      <p class="title is-5">User settings</p>
     </div>
 
     <div class="column is-half">
