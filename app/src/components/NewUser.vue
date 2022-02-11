@@ -195,16 +195,7 @@
       <hr />
     </div>
 
-    <div class="column is-half">
-      <router-link
-        class="button is-light is-warning is-fullwidth"
-        :to="{ name: 'settings' }"
-      >
-        settings
-      </router-link>
-    </div>
-
-    <div class="column is-half">
+    <div class="column is-full">
       <button class="button is-light is-danger is-fullwidth" @click="logout">
         logout
       </button>

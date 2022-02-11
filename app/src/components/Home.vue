@@ -5,7 +5,9 @@
 
       <p>Organisation: {{ org }}</p>
       <p>User: {{ email }}</p>
-      <p>Admin: {{ admin }}</p>
+
+      <!-- Convert to string as admin is only set to true if true, else if false, it is not set at all -->
+      <p>Admin: {{ admin ? "Yes" : "No" }}</p>
     </div>
 
     <div class="column is-full">
@@ -34,19 +36,29 @@
       <hr />
     </div>
 
-    <div class="column is-half">
+    <div class="column is-narrow">
+      <button class="button is-light is-danger is-fullwidth" @click="logout">
+        logout
+      </button>
+    </div>
+
+    <div class="column">
       <router-link
-        class="button is-light is-warning is-fullwidth"
+        class="button is-light is-fullwidth"
         :to="{ name: 'settings' }"
       >
         settings
       </router-link>
     </div>
 
-    <div class="column is-half">
-      <button class="button is-light is-danger is-fullwidth" @click="logout">
-        logout
-      </button>
+    <div class="column">
+      <a
+        class="button is-light is-success is-fullwidth"
+        href="https://chrome.google.com/webstore/detail/dns-notes/hcbjfopoaoaokbmcchkdbojpjlhgpjna"
+        target="_blank"
+      >
+        Download the chrome extension
+      </a>
     </div>
   </div>
 </template>

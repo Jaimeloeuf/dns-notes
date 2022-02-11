@@ -5,7 +5,9 @@
 
       <p>Organisation: {{ org }}</p>
       <p>User: {{ email }}</p>
-      <p>Admin: {{ admin }}</p>
+
+      <!-- Convert to string as admin is only set to true if true, else if false, it is not set at all -->
+      <p>Admin: {{ admin ? "Yes" : "No" }}</p>
     </div>
 
     <!-- Settings for Admins only -->
