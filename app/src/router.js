@@ -133,14 +133,18 @@ function AuthChecker(to, from, next) {
    * @notice Hard coded routes based on authentication status or proceed to route user requested for.
    */
   // If route is auth protected and user not logged in, redirect to login page
-  if (AuthType_required_is.private && !currentUser)
-    next({
-      name: "login",
-      query: {
+  if (AuthType_required_is.private && !currentUser) {
+    const routeTo = { name: "login" };
+
+    // If there is no route to redirect to, then leave this out
+    if (to.path !== "/")
+      routeTo.query = {
         // Instead of storing to.fullPath, create a new route object as fullPath will have query params stripped out
         redirect: JSON.stringify({ path: to.path, query: to.query }),
-      },
-    });
+      };
+
+    next(routeTo);
+  }
   // If route is public only and user is logged in, redirect to default private route of home
   else if (AuthType_required_is.public_only && currentUser)
     next({ name: "home" });
