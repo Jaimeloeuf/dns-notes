@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import store from "./store/index.js";
 import Home from "./components/Home.vue";
 
 import { auth } from "./firebase.js";
@@ -39,7 +40,6 @@ const router = createRouter({
    * which is lazy-loaded when the route is visited.
    */
   routes: [
-    // @todo Change this to a home UI
     {
       path: "/",
       name: "home",
@@ -129,8 +129,13 @@ function AuthChecker(to, from, next) {
   const AuthType_required_is = requiredAuth(to);
 
   /**
-   * @notice Call the next middleware provided by vue router with a route to go to.
-   * @notice Hard coded routes based on authentication status or proceed to route user requested for.
+   * Call next middleware provided by vue router with a route to go to.
+   * Routing based on authentication status and user type / org status
+   *
+   * Definition of a new user is any user that does not already belong to an organization
+   * Thus simply check if a user have the org value set in vuex's state
+   * Any use of `!store.state.org` is treated as `newUser`
+   * const newUser = !Boolean(store.state.org);
    */
   // If route is auth protected and user not logged in, redirect to login page
   if (AuthType_required_is.private && !currentUser) {
@@ -148,6 +153,12 @@ function AuthChecker(to, from, next) {
   // If route is public only and user is logged in, redirect to default private route of home
   else if (AuthType_required_is.public_only && currentUser)
     next({ name: "home" });
+  // If logged in and trying to go new-user even though user is not new, redirect to default private route of home
+  else if (currentUser && to.name === "new-user" && store.state.org)
+    return next({ name: "home" });
+  // If logged in and trying to access none new-user routes despite being new, redirect to new-user
+  else if (currentUser && to.name !== "new-user" && !store.state.org)
+    return next({ name: "new-user" });
   // Else, just continue navigation as per user request.
   else next();
 }
