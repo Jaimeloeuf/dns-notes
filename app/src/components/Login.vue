@@ -3,6 +3,15 @@
     <div class="columns is-multiline box">
       <div class="column is-full">
         <p class="title is-3">Login</p>
+        <div class="content">
+          <ul>
+            <li>Login with any OIDC provider to prove your email address.</li>
+            <li>
+              There is no 'signup' as you already need an account with any of
+              the below login providers.
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="column is-full">
@@ -13,6 +22,12 @@
               @click="login_google"
             >
               Google Login
+            </button>
+          </div>
+
+          <div class="column is-full">
+            <button class="button is-fullwidth py-5 is-light">
+              More coming soon!
             </button>
           </div>
 

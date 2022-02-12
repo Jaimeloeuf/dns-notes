@@ -101,6 +101,9 @@
                     <li>At least 2 characters</li>
                     <li>At most 60 characters</li>
                     <li>Must be unique</li>
+
+                    <!-- Because hard to update all docs's orgID and almost impossible to update all user's custom claims -->
+                    <li>CANNOT BE CHANGED</li>
                   </ul>
                 </div>
 
@@ -118,7 +121,7 @@
                     />
                   </div>
                   <div class="control">
-                    <button class="button" @click="clearSearchInput">
+                    <button class="button" @click="clearOrgIDInput">
                       clear
                     </button>
                   </div>
@@ -145,7 +148,7 @@
           <div class="columns is-multiline">
             <div class="column is-full" v-if="true">
               <label>
-                <b>Enter organization ID</b>
+                <b>Enter organization ID</b> (Case Sensitive)
 
                 <div class="field has-addons">
                   <div class="control is-expanded">
@@ -161,7 +164,7 @@
                     />
                   </div>
                   <div class="control">
-                    <button class="button" @click="clearSearchInput">
+                    <button class="button" @click="clearOrgIDInput">
                       clear
                     </button>
                   </div>
@@ -256,7 +259,7 @@ export default {
     async create() {},
 
     // Clear the search input box and re-focus on the search field
-    clearSearchInput() {
+    clearOrgIDInput() {
       this.orgID = "";
       this.$refs.orgIDField.focus();
     },
