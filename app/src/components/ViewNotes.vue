@@ -66,6 +66,8 @@
             </div>
 
             <div v-else>
+              <p class="subtitle is-6">Ordered by latest to oldest</p>
+
               <table class="table">
                 <!-- @todo Add in time of note creation -->
                 <tr>
@@ -96,7 +98,11 @@
 
                 <!-- Show all notes if there is no search input and no hostname in URL -->
                 <template v-if="search_input === '' && !this.hostname">
-                  <tr v-for="(note, i) in notes" :key="i">
+                  <tr
+                    v-for="(note, i) in notes"
+                    :key="i"
+                    @click="editNote(note.id)"
+                  >
                     <td>{{ note.provider }}</td>
                     <td>{{ note.domain }}</td>
                     <td>{{ note.type }}</td>
@@ -121,6 +127,7 @@
                     v-for="({ item: note }, i) in results"
                     :key="i"
                     :class="{ 'bg-select': note.subdomain === search_input }"
+                    @click="editNote(note.id)"
                   >
                     <td>{{ note.provider }}</td>
                     <td>{{ note.domain }}</td>
@@ -222,6 +229,10 @@ export default {
     clearSearchInput() {
       this.search_input = "";
       this.$refs.searchField.focus();
+    },
+
+    editNote(noteID) {
+      this.$router.push({ name: "edit", params: { noteID } });
     },
 
     async deleteNote(noteID) {

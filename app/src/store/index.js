@@ -56,10 +56,6 @@ export default createStore({
     // Mutation to remove a single new note
     deleteNote: (state, noteID) => delete state.notes[noteID],
 
-    // Mutation to edit a single note
-    editNote: (state, note) =>
-      (state.notes[note.id] = { ...state.notes[note.id], ...note }),
-
     // Mutation to set a new last sync time
     setLastSync: (state, lastSync) => (state.lastSync = lastSync),
 
@@ -107,7 +103,8 @@ export default createStore({
               break;
 
             case "edit":
-              commit("editNote", event.note);
+              // Semantically same as delete + create, so use addNewNote to overwrite existing note
+              commit("addNewNote", event.note);
               break;
 
             default:
@@ -157,7 +154,8 @@ export default createStore({
         const res = await syncPost(state, { type: "edit", note });
         if (!res.ok) return failed(res.error, dispatch, "editNote");
 
-        commit("editNote", note);
+        // Semantically same as delete + create, so use addNewNote to overwrite existing note
+        commit("addNewNote", note);
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);

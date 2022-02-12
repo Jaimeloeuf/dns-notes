@@ -131,11 +131,9 @@ router.post(
         return res.status(200).json({});
 
       case "edit":
-        // Update note in notes collection
-        await fs
-          .collection("notes")
-          .doc(event.note.id)
-          .update({ ...event.note });
+        // Update note in notes collection by overwriting the original note
+        // Semantically similar to deleting and creating new one with the same note ID
+        await fs.collection("notes").doc(event.note.id).set(event.note);
 
         // Add event into the event store
         await fs.collection("events").add(event);

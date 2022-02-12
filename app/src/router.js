@@ -63,6 +63,13 @@ const router = createRouter({
       meta: { Auth_requirements: AuthType.private },
     },
     {
+      path: "/edit/:noteID",
+      name: "edit",
+      props: true,
+      component: () => import("./components/Edit.vue"),
+      meta: { Auth_requirements: AuthType.private },
+    },
+    {
       path: "/new",
       name: "new-user",
       component: () => import("./components/NewUser.vue"),
