@@ -1,3 +1,10 @@
+<style scoped>
+/* Highlight background of table row for search exact matches */
+.bg-select {
+  background-color: rgb(220, 220, 220);
+}
+</style>
+
 <template>
   <div class="px-5 py-5">
     <div class="columns is-multiline">
@@ -59,11 +66,8 @@
             </div>
 
             <div v-else>
-              <table>
-                <!-- @todo
-                  Add in organization this note belongs to
-                  Add in time of note creation
-                -->
+              <table class="table">
+                <!-- @todo Add in time of note creation -->
                 <tr>
                   <!-- Which DNS provider is this record stored in -->
                   <th>DNS provider</th>
@@ -113,7 +117,11 @@
                 </template>
 
                 <template v-else>
-                  <tr v-for="({ item: note }, i) in results" :key="i">
+                  <tr
+                    v-for="({ item: note }, i) in results"
+                    :key="i"
+                    :class="{ 'bg-select': note.subdomain === search_input }"
+                  >
                     <td>{{ note.provider }}</td>
                     <td>{{ note.domain }}</td>
                     <td>{{ note.type }}</td>
