@@ -2,7 +2,7 @@
   <div class="px-5 py-5" style="max-width: 30em">
     <div class="columns is-multiline box">
       <div class="column is-full">
-        <p class="title is-3">{{ title }}</p>
+        <slot name="header"></slot>
       </div>
 
       <div class="column is-full">
@@ -107,7 +107,7 @@
               class="button is-fullwidth py-5 is-light is-success"
               @click="done"
             >
-              {{ onCompleteBtn }}
+              <slot name="onCompleteBtnTxt"></slot>
             </button>
           </div>
         </div>
@@ -122,7 +122,7 @@ import unixseconds from "unixseconds";
 export default {
   name: "NoteForm",
 
-  props: ["default", "title", "onCompleteBtn"],
+  props: ["default"],
 
   data() {
     return {

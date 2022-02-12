@@ -1,10 +1,14 @@
 <template>
   <NoteForm
     :default="{ provider: hostname, subdomain: name }"
-    title="Create new note"
-    onCompleteBtn="Create"
     @edit-done="create"
-  />
+  >
+    <template #header>
+      <p class="title is-3">Create new note</p>
+    </template>
+
+    <template #onCompleteBtnTxt>Create</template>
+  </NoteForm>
 </template>
 
 <script>
