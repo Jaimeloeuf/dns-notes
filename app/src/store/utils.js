@@ -32,6 +32,7 @@ export const syncPost = async (state, event) =>
  * @param {String} errorString Error message to show user when asking them if they want to retry
  * @param {function} dispatch The vuex dispatch action function
  * @param {String} action The name of the vuex action that calls this function, to recursively dispatch
+ * @param {*} payload The payload required by the action
  */
-export const failed = (errorString, dispatch, action) =>
-  confirm(`Error: \n${errorString}\n\nTry again?`) && dispatch(action);
+export const failed = (errorString, dispatch, action, payload) =>
+  confirm(`Error: \n${errorString}\n\nTry again?`) && dispatch(action, payload);
