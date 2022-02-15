@@ -50,8 +50,10 @@
                 <p class="subtitle is-4">Select to edit</p>
               </div>
 
+              <!-- If last sync not set for whatever reason, show NIL instead of 1970 -->
               <div class="column is-narrow">
-                Last sync: {{ formatTimeslot(lastSync * 1000) }}
+                Last sync:
+                {{ lastSync ? formatTimeslot(lastSync * 1000) : "NIL" }}
               </div>
 
               <div class="column is-narrow">
