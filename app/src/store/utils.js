@@ -36,3 +36,16 @@ export const syncPost = async (state, event) =>
  */
 export const failed = (errorString, dispatch, action, payload) =>
   confirm(`Error: \n${errorString}\n\nTry again?`) && dispatch(action, payload);
+
+/**
+ * Wraps action to catch any errors, handles them and allow user to retry by recursively dispatch action again
+ * @param {function} actionFn The vuex action function to wrap
+ * @param {String} [actionName] Optional string to override the function's name to use as the action's name
+ */
+export const errorHandlingWrapper =
+  (actionFn, actionName) => async (context, payload) =>
+    actionFn(context, payload).catch(
+      (error) =>
+        confirm(`Error: \n${error.message}\n\nTry again?`) &&
+        context.dispatch(actionName || actionFn.name, payload)
+    );

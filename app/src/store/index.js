@@ -4,7 +4,7 @@ import createPersistedState from "vuex-persistedstate";
 import { getAuthHeader } from "../firebase.js";
 import { oof } from "simpler-fetch";
 
-import { lazilyLoad, syncPost, failed } from "./utils.js";
+import { lazilyLoad, syncPost, errorHandlingWrapper, failed } from "./utils.js";
 
 /**
  * Function to get the default state of vuex store as a new object everytime it is called.
@@ -82,45 +82,39 @@ export default createStore({
     inviteIndividual: lazilyLoad(() => import("./actions/inviteIndividual.js")),
     inviteBulk: lazilyLoad(() => import("./actions/inviteBulk.js")),
 
-    async sync({ commit, state, dispatch }) {
-      try {
-        const res = await oof
-          .GET(`/note/sync/${state.org}/${state.lastSync}`)
-          .header(await getAuthHeader())
-          .runJSON();
+    sync: errorHandlingWrapper(async function sync({ commit, state }) {
+      const res = await oof
+        .GET(`/note/sync/${state.org}/${state.lastSync}`)
+        .header(await getAuthHeader())
+        .runJSON();
 
-        if (!res.ok) return failed(res.error, dispatch, "sync");
+      if (!res.ok) throw new Error(res.error);
 
-        // Apply all the events / changes one by one using the various mutations
-        for (const event of res.events)
-          switch (event.type) {
-            case "add":
-              commit("addNewNote", event.note);
-              break;
+      // Apply all the events / changes one by one using the various mutations
+      for (const event of res.events)
+        switch (event.type) {
+          case "add":
+            commit("addNewNote", event.note);
+            break;
 
-            case "del":
-              commit("deleteNote", event.noteID);
-              break;
+          case "del":
+            commit("deleteNote", event.noteID);
+            break;
 
-            case "edit":
-              // Semantically same as delete + create, so use addNewNote to overwrite existing note
-              commit("addNewNote", event.note);
-              break;
+          case "edit":
+            // Semantically same as delete + create, so use addNewNote to overwrite existing note
+            commit("addNewNote", event.note);
+            break;
 
-            default:
-              throw new Error(
-                `Internal Error: Invalid event type '${event.type}' received from sync API`
-              );
-          }
+          default:
+            throw new Error(
+              `Internal Error: Invalid event type '${event.type}' received from sync API`
+            );
+        }
 
-        // Update last sync time only after events are ran so in case it crashes, the events can be re-ran
-        commit("setLastSync", res.time);
-      } catch (error) {
-        // For errors that cause API call itself to throw
-        console.error(error);
-        return failed(error.message, dispatch, "sync");
-      }
-    },
+      // Update last sync time only after events are ran so in case it crashes, the events can be re-ran
+      commit("setLastSync", res.time);
+    }),
 
     async newNote({ commit, state, dispatch }, note) {
       try {
