@@ -82,7 +82,7 @@ export default createStore({
     inviteIndividual: lazilyLoad(() => import("./actions/inviteIndividual.js")),
     inviteBulk: lazilyLoad(() => import("./actions/inviteBulk.js")),
 
-    sync: errorHandlingWrapper(async function sync({ commit, state }) {
+    sync: errorHandlingWrapper(async function sync({ state, dispatch }) {
       const res = await oof
         .GET(`/note/sync/${state.org}/${state.lastSync}`)
         .header(await getAuthHeader())
@@ -90,8 +90,15 @@ export default createStore({
 
       if (!res.ok) throw new Error(res.error);
 
+      dispatch("syncEvents", res);
+    }),
+
+    syncEvents: errorHandlingWrapper(function syncEvents(
+      { commit },
+      { events, time }
+    ) {
       // Apply all the events / changes one by one using the various mutations
-      for (const event of res.events)
+      for (const event of events)
         switch (event.type) {
           case "add":
             commit("addNewNote", event.note);
@@ -113,7 +120,7 @@ export default createStore({
         }
 
       // Update last sync time only after events are ran so in case it crashes, the events can be re-ran
-      commit("setLastSync", res.time);
+      commit("setLastSync", time);
     }),
 
     async newNote({ commit, state, dispatch }, note) {
