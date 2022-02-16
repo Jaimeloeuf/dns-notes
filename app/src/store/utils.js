@@ -44,7 +44,8 @@ export const failed = (errorString, dispatch, action, payload) =>
  */
 export const errorHandlingWrapper =
   (actionFn, actionName) => async (context, payload) =>
-    actionFn(context, payload).catch(
+    // Wrap action so that synchronous functions can have their errors caught using .catch too
+    Promise.resolve(actionFn(context, payload)).catch(
       (error) =>
         confirm(`Error: \n${error.message}\n\nTry again?`) &&
         context.dispatch(actionName || actionFn.name, payload)
