@@ -34,6 +34,21 @@ router.get(
 );
 
 /**
+ * Function to get events from firestore
+ * @param {String} orgID orgID of the user found on their JWT
+ * @param {String} lastSync unix seconds in string to be parsed into a Int
+ */
+const getEvents = async (orgID, lastSync) =>
+  fs
+    .collection("events")
+    .where("org", "==", orgID)
+    .where("time", ">=", parseInt(lastSync))
+    .orderBy("time", "asc")
+    .get()
+    .then((snap) => snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+    .then((events) => ({ events, time: unixseconds() }));
+
+/**
  * API for clients to get events for syncing and to get a new last sync time
  * @name GET /note/sync/:orgID/:lastSync
  */
@@ -43,14 +58,7 @@ router.get(
   authzMW((token, req) => req.params.orgID === token.org),
 
   asyncWrap(async (req, res) =>
-    fs
-      .collection("events")
-      .where("org", "==", req.params.orgID)
-      .where("time", ">=", parseInt(req.params.lastSync))
-      .orderBy("time", "asc")
-      .get()
-      .then((snap) => snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
-      .then((events) => res.status(200).json({ events, time: unixseconds() }))
+    res.status(200).json(await getEvents(req.params.orgID, req.params.lastSync))
   )
 );
 
