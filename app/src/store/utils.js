@@ -23,14 +23,12 @@ export const failed = (errorString, dispatch, action, payload) =>
 
 /**
  * Wraps action to catch any errors, handles them and allow user to retry by recursively dispatch action again
- * @param {function} actionFn The vuex action function to wrap
- * @param {String} [actionName] Optional string to override the function's name to use as the action's name
+ * @param {function} actionFn The vuex action function to wrap, function needs to be named as the action name
  */
-export const errorHandlingWrapper =
-  (actionFn, actionName) => async (context, payload) =>
-    // Wrap action so that synchronous functions can have their errors caught using .catch too
-    Promise.resolve(actionFn(context, payload)).catch(
-      (error) =>
-        confirm(`Error: \n${error.message}\n\nTry again?`) &&
-        context.dispatch(actionName || actionFn.name, payload)
-    );
+export const errorHandlingWrapper = (actionFn) => async (context, payload) =>
+  // Wrap action so that synchronous functions can have their errors caught using .catch too
+  Promise.resolve(actionFn(context, payload)).catch(
+    (error) =>
+      confirm(`Error: \n${error.message}\n\nTry again?`) &&
+      context.dispatch(actionFn.name, payload)
+  );
