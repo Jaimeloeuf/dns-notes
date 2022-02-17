@@ -123,13 +123,12 @@ export default createStore({
       commit("setLastSync", time);
     }),
 
-    async newNote({ commit, state, dispatch }, note) {
+    async newNote({ state, dispatch }, note) {
       try {
         const res = await syncPost(state, { type: "add", note });
         if (!res.ok) return failed(res.error, dispatch, "newNote");
 
-        // Add note into state with ID from API
-        commit("addNewNote", { ...note, id: res.id });
+        dispatch("syncEvents", res);
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
@@ -137,12 +136,12 @@ export default createStore({
       }
     },
 
-    async deleteNote({ commit, state, dispatch }, noteID) {
+    async deleteNote({ state, dispatch }, noteID) {
       try {
         const res = await syncPost(state, { type: "del", noteID });
         if (!res.ok) return failed(res.error, dispatch, "deleteNote");
 
-        commit("deleteNote", noteID);
+        dispatch("syncEvents", res);
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);
@@ -150,13 +149,12 @@ export default createStore({
       }
     },
 
-    async editNote({ commit, state, dispatch }, note) {
+    async editNote({ state, dispatch }, note) {
       try {
         const res = await syncPost(state, { type: "edit", note });
         if (!res.ok) return failed(res.error, dispatch, "editNote");
 
-        // Semantically same as delete + create, so use addNewNote to overwrite existing note
-        commit("addNewNote", note);
+        dispatch("syncEvents", res);
       } catch (error) {
         // For errors that cause API call itself to throw
         console.error(error);

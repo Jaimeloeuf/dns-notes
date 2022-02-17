@@ -64,10 +64,10 @@ router.get(
 
 /**
  * API for client to send events to
- * @name POST /note/sync/:orgID
+ * @name POST /note/sync/:orgID/:lastSync
  */
 router.post(
-  "/sync/:orgID",
+  "/sync/:orgID/:lastSync",
 
   authzMW((token, req) => req.params.orgID === token.org),
 
@@ -127,7 +127,9 @@ router.post(
         // Add event into the event store
         await fs.collection("events").add(event);
 
-        return res.status(201).json({ id });
+        return res
+          .status(201)
+          .json(await getEvents(req.params.orgID, req.params.lastSync));
 
       case "del":
         // Delete note from notes store
@@ -136,7 +138,9 @@ router.post(
         // Add event into the event store
         await fs.collection("events").add(event);
 
-        return res.status(200).json({});
+        return res
+          .status(200)
+          .json(await getEvents(req.params.orgID, req.params.lastSync));
 
       case "edit":
         // Update note in notes collection by overwriting the original note
@@ -146,7 +150,9 @@ router.post(
         // Add event into the event store
         await fs.collection("events").add(event);
 
-        return res.status(200).json({});
+        return res
+          .status(200)
+          .json(await getEvents(req.params.orgID, req.params.lastSync));
 
       default:
         return res.status(400).json({

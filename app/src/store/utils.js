@@ -21,7 +21,7 @@ export const lazilyLoad = (loader) => async (context, payload) =>
  */
 export const syncPost = async (state, event) =>
   oof
-    .POST(`/note/sync/${state.org}`)
+    .POST(`/note/sync/${state.org}/${state.lastSync}`)
     .header(await getAuthHeader())
     .data({ event })
     .runJSON();
