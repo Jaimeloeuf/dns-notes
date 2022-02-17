@@ -4,7 +4,10 @@ import createPersistedState from "vuex-persistedstate";
 import { getAuthHeader } from "../firebase.js";
 import { oof } from "simpler-fetch";
 
-import { lazilyLoad, syncPost, errorHandlingWrapper, failed } from "./utils.js";
+import { lazilyLoad, errorHandlingWrapper } from "./utils.js";
+
+// Import actions from 'note' module as these will almost always be used
+import { newNote, deleteNote, editNote } from "./actions/note.js";
 
 /**
  * Function to get the default state of vuex store as a new object everytime it is called.
@@ -123,43 +126,8 @@ export default createStore({
       commit("setLastSync", time);
     }),
 
-    async newNote({ state, dispatch }, note) {
-      try {
-        const res = await syncPost(state, { type: "add", note });
-        if (!res.ok) return failed(res.error, dispatch, "newNote");
-
-        dispatch("syncEvents", res);
-      } catch (error) {
-        // For errors that cause API call itself to throw
-        console.error(error);
-        return failed(error.message, dispatch, "newNote");
-      }
-    },
-
-    async deleteNote({ state, dispatch }, noteID) {
-      try {
-        const res = await syncPost(state, { type: "del", noteID });
-        if (!res.ok) return failed(res.error, dispatch, "deleteNote");
-
-        dispatch("syncEvents", res);
-      } catch (error) {
-        // For errors that cause API call itself to throw
-        console.error(error);
-        return failed(error.message, dispatch, "deleteNote");
-      }
-    },
-
-    async editNote({ state, dispatch }, note) {
-      try {
-        const res = await syncPost(state, { type: "edit", note });
-        if (!res.ok) return failed(res.error, dispatch, "editNote");
-
-        dispatch("syncEvents", res);
-      } catch (error) {
-        // For errors that cause API call itself to throw
-        console.error(error);
-        return failed(error.message, dispatch, "editNote");
-      }
-    },
+    newNote: errorHandlingWrapper(newNote),
+    deleteNote: errorHandlingWrapper(deleteNote),
+    editNote: errorHandlingWrapper(editNote),
   },
 });

@@ -2,9 +2,6 @@
   Module for utilities used by the vuex store
 */
 
-import { getAuthHeader } from "../firebase.js";
-import { oof } from "simpler-fetch";
-
 /**
  * Utils module to easily create a new action function to handle lazily created actions
  * @param {Function} loader A loader function that returns a Promise that resolves to a module, a.k.a () => import(path)
@@ -12,19 +9,6 @@ import { oof } from "simpler-fetch";
  */
 export const lazilyLoad = (loader) => async (context, payload) =>
   loader().then(({ default: fn }) => fn(context, payload));
-
-/**
- * Abstraction over API call to send event data to the sync endpoint
- * @param {object} state Vuex state object to get the org ID
- * @param {object} event Event object to send to API for syncing
- * @returns {Promise<Response>} Returns API call's promise
- */
-export const syncPost = async (state, event) =>
-  oof
-    .POST(`/note/sync/${state.org}/${state.lastSync}`)
-    .header(await getAuthHeader())
-    .data({ event })
-    .runJSON();
 
 /**
  * If the API call failed, recursively dispatch the action again if user wants to retry,
