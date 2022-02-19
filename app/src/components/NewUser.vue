@@ -235,11 +235,16 @@ export default {
     logout,
 
     async checkForInvites() {
-      this.invite = await this.$store.dispatch("checkForInvites");
+      this.invite = await this.$store.dispatch("withLoader", [
+        "checkForInvites",
+      ]);
     },
 
     async acceptInvite() {
-      await this.$store.dispatch("acceptInvite", this.invite.id);
+      await this.$store.dispatch("withLoader", [
+        "acceptInvite",
+        this.invite.id,
+      ]);
 
       // Redirect to actual home page once all new data is loaded
       this.$router.replace({ name: "home" });

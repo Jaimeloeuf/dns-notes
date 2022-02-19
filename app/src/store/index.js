@@ -70,6 +70,15 @@ export default createStore({
   },
 
   actions: {
+    // Action to call other actions and show loader while waiting for it to complete
+    async withLoader({ commit, dispatch }, [action, payload]) {
+      commit("loading", true);
+      const res = await dispatch(action, payload);
+      commit("loading", false);
+      return res;
+    },
+
+    /* All the lazily loaded actions */
     // Could have written it like this too, but the bundler cannot analyze dynamic import calls
     // which meant that the full paths were used even in the full builds where all resource names are mangled
     // const lazyLoader = (path) => async (context, payload) =>
@@ -77,13 +86,17 @@ export default createStore({
     //     fn(context, payload)
     //   );
     // loadAllNotes: lazyLoader("./actions/loadAllNotes.js"),
-
     loadAllNotes: lazilyLoad(() => import("./actions/loadAllNotes.js")),
     checkForInvites: lazilyLoad(() => import("./actions/checkForInvites.js")),
     acceptInvite: lazilyLoad(() => import("./actions/acceptInvite.js")),
     rejectInvite: lazilyLoad(() => import("./actions/rejectInvite.js")),
     inviteIndividual: lazilyLoad(() => import("./actions/inviteIndividual.js")),
     inviteBulk: lazilyLoad(() => import("./actions/inviteBulk.js")),
+
+    /* Actions for POSTing updates to API */
+    newNote: errorHandlingWrapper(newNote),
+    deleteNote: errorHandlingWrapper(deleteNote),
+    editNote: errorHandlingWrapper(editNote),
 
     sync: errorHandlingWrapper(async function sync({ state, dispatch }) {
       const res = await oof
@@ -125,9 +138,5 @@ export default createStore({
       // Update last sync time only after events are ran so in case it crashes, the events can be re-ran
       commit("setLastSync", time);
     }),
-
-    newNote: errorHandlingWrapper(newNote),
-    deleteNote: errorHandlingWrapper(deleteNote),
-    editNote: errorHandlingWrapper(editNote),
   },
 });

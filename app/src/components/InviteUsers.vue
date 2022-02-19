@@ -196,13 +196,14 @@ export default {
     },
 
     async inviteIndividual() {
-      this.$store.commit("loading", true);
-      await this.$store.dispatch("inviteIndividual", {
-        // Email must be lowercase as the email in tokens are all lower cased by default
-        email: this.email.toLowerCase(),
-        admin: this.admin,
-      });
-      this.$store.commit("loading", false);
+      await this.$store.dispatch("withLoader", [
+        "inviteIndividual",
+        {
+          // Email must be lowercase as the email in tokens are all lower cased by default
+          email: this.email.toLowerCase(),
+          admin: this.admin,
+        },
+      ]);
 
       // Reset the inputs
       // Reset the data values to its original state by re-running the data method

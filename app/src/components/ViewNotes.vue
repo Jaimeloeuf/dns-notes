@@ -221,10 +221,8 @@ export default {
   methods: {
     formatTimeslot,
 
-    async refresh() {
-      this.$store.commit("loading", true);
-      await this.$store.dispatch("sync");
-      this.$store.commit("loading", false);
+    refresh() {
+      this.$store.dispatch("withLoader", ["sync"]);
     },
 
     // Clear the search input box and re-focus on the search field
@@ -238,9 +236,7 @@ export default {
     },
 
     async deleteNote(noteID) {
-      this.$store.commit("loading", true);
-      await this.$store.dispatch("deleteNote", noteID);
-      this.$store.commit("loading", false);
+      await this.$store.dispatch("withLoader", ["deleteNote", noteID]);
     },
   },
 

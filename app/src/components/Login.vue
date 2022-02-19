@@ -89,11 +89,7 @@ export default {
         // on the latest set of notes returned from this API call.
         // Thus to prevent this from happening, a full screen loader is used to prevent navigation until API resolves.
         // An alternative is to set a value in vuex, so sync action will wait fpr loadAllNotes action to complete.
-        if (org) {
-          this.$store.commit("loading", true);
-          await this.$store.dispatch("loadAllNotes");
-          this.$store.commit("loading", false);
-        }
+        if (org) await this.$store.dispatch("withLoader", ["loadAllNotes"]);
 
         // Passing a to.fullPath as redirect string path to Vue router does not work, all query params is stripped off
         // if (this.redirect) this.$router.replace({ path: this.redirect });

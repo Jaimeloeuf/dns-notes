@@ -31,9 +31,7 @@ export default {
 
   methods: {
     async edit(note) {
-      this.$store.commit("loading", true);
-      await this.$store.dispatch("editNote", note);
-      this.$store.commit("loading", false);
+      await this.$store.dispatch("withLoader", ["editNote", note]);
 
       this.$router.push({ name: "view" });
     },

@@ -23,9 +23,7 @@ export default {
 
   methods: {
     async create(note) {
-      this.$store.commit("loading", true);
-      await this.$store.dispatch("newNote", note);
-      this.$store.commit("loading", false);
+      await this.$store.dispatch("withLoader", ["newNote", note]);
 
       this.$router.push({ name: "view" });
     },
