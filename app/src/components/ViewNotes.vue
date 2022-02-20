@@ -116,7 +116,7 @@
                     <td>
                       <button
                         class="button is-light is-danger is-small"
-                        @click="deleteNote(note.id)"
+                        @click.stop="deleteNote(note.id)"
                       >
                         del
                       </button>
@@ -142,7 +142,7 @@
                     <td>
                       <button
                         class="button is-light is-danger is-small"
-                        @click="deleteNote(note.id)"
+                        @click.stop="deleteNote(note.id)"
                       >
                         del
                       </button>
