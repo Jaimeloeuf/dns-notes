@@ -122,4 +122,47 @@ router.post(
   })
 );
 
+/**
+ * API for users to request to join an org
+ * @name POST /user/request/:orgID
+ */
+router.post(
+  "/request/:orgID",
+
+  // @todo Middleware to reject all requests for now as this feature might not be used
+  (_, res) => res.status(400).json({ error: "Feature not allowed" }),
+
+  // Ensure user does not already have an organization
+  authzMW((token) => token.org === undefined),
+
+  // Only parse request body if user authorized to access API
+  express.json(),
+
+  asyncWrap(async (req, res) => {
+    const { org, admin } = req.body;
+
+    // @todo Check that org is a valid one
+    // return res.status(400).json({ error:"Invalid org ID" });
+
+    // Check if admin is a valid Boolean value
+    if (typeof admin !== "boolean")
+      return res.status(400).json({ error: "Admin value must be boolean" });
+
+    const { id } = await fs.collection("user-requests").add({
+      org,
+      admin,
+
+      // Use the email attached to the user's token instead of accepting it as input
+      email: req.authenticatedUser.email,
+
+      // Auto generated server timestamp to check if request expired later on
+      time: unixseconds(),
+    });
+
+    // @todo Email all admins of selected org to ask for their permissions
+
+    res.status(201).json({ id });
+  })
+);
+
 module.exports = router;
