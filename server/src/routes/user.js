@@ -38,9 +38,13 @@ router.post(
     // Auto generated server timestamp to check if invite expired later on
     const time = unixseconds();
 
+    // @todo Use auth API to check if user account already exists first
+
+    // @todo Ensure users can only be invited to join 1 org at a time
     const inviteUser = (user) =>
       fs.collection("user-invites").add({ ...user, org, invitedBy, time });
 
+    // @todo Send invitation email to the user asking them to login directly
     // API handler supports both getting an array of users and a single user
     if (
       req.body.users &&
@@ -162,6 +166,31 @@ router.post(
     // @todo Email all admins of selected org to ask for their permissions
 
     res.status(201).json({ id });
+  })
+);
+
+/**
+ * API for users to leave an org
+ * @name POST /user/leave/:orgID
+ */
+router.post(
+  "/leave/:orgID",
+
+  // Ensure user belongs to an organization
+  authzMW((token) => token.org !== undefined),
+
+  asyncWrap(async (req, res) => {
+    // Clear the custom claims on the user's JWT first
+    await require("../utils/claims.js").setClaimsWithEmail({
+      // Set both to undefined to remove any values
+      admin: undefined,
+      org: undefined,
+    })(req.authenticatedUser.email);
+
+    // @todo Update DB as needed
+    // req.authenticatedUser.org;
+
+    res.status(200).json({});
   })
 );
 
