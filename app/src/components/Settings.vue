@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import logout from "../utils/logout.js";
 
 export default {
@@ -94,7 +94,7 @@ export default {
   methods: {
     logout,
 
-    async leaveOrg() {},
+    ...mapActions(["leaveOrg"]),
     async delAcc() {},
   },
 };

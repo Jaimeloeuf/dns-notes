@@ -92,6 +92,7 @@ export default createStore({
     rejectInvite: lazilyLoad(() => import("./actions/rejectInvite.js")),
     inviteIndividual: lazilyLoad(() => import("./actions/inviteIndividual.js")),
     inviteBulk: lazilyLoad(() => import("./actions/inviteBulk.js")),
+    leaveOrg: lazilyLoad(() => import("./actions/leaveOrg.js")),
 
     /* Actions for POSTing updates to API */
     newNote: errorHandlingWrapper(newNote),
