@@ -6,8 +6,7 @@ import router from "../../router.js";
 import { errorHandlingWrapper } from "../utils.js";
 
 /**
- * Vuex action to bulk invite users to admin's own org.
- * Only used by admins thus lazily loaded.
+ * Vuex action to leave their current organization
  */
 export default errorHandlingWrapper(async function leaveOrg({ state, commit }) {
   const res = await oof
