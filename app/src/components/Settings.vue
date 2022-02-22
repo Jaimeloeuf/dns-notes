@@ -49,15 +49,9 @@
       <p class="title is-5">User settings</p>
     </div>
 
-    <div class="column is-half">
+    <div class="column">
       <button class="button is-light is-danger is-fullwidth" @click="leaveOrg">
         Leave organization
-      </button>
-    </div>
-
-    <div class="column is-half">
-      <button class="button is-light is-danger is-fullwidth" @click="delAcc">
-        Delete account
       </button>
     </div>
 
@@ -66,7 +60,7 @@
     </div>
 
     <div class="column is-half">
-      <button class="button is-light is-danger is-fullwidth" @click="logout">
+      <button class="button is-light is-fullwidth" @click="logout">
         logout
       </button>
     </div>
@@ -83,7 +77,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 import logout from "../utils/logout.js";
 
 export default {
@@ -94,8 +88,9 @@ export default {
   methods: {
     logout,
 
-    ...mapActions(["leaveOrg"]),
-    async delAcc() {},
+    async leaveOrg() {
+      this.$store.dispatch("withLoader", ["leaveOrg"]);
+    },
   },
 };
 </script>

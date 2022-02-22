@@ -198,8 +198,14 @@
       <hr />
     </div>
 
-    <div class="column is-full">
-      <button class="button is-light is-danger is-fullwidth" @click="logout">
+    <div class="column is-narrow">
+      <button class="button is-light is-danger is-fullwidth" @click="delAcc">
+        Delete Account
+      </button>
+    </div>
+
+    <div class="column">
+      <button class="button is-light is-fullwidth" @click="logout">
         logout
       </button>
     </div>
@@ -234,6 +240,12 @@ export default {
   methods: {
     logout,
 
+    // Clear the search input box and re-focus on the search field
+    clearOrgIDInput() {
+      this.orgID = "";
+      this.$refs.orgIDField.focus();
+    },
+
     async checkForInvites() {
       this.invite = await this.$store.dispatch("withLoader", [
         "checkForInvites",
@@ -263,10 +275,8 @@ export default {
 
     async create() {},
 
-    // Clear the search input box and re-focus on the search field
-    clearOrgIDInput() {
-      this.orgID = "";
-      this.$refs.orgIDField.focus();
+    async delAcc() {
+      this.$store.dispatch("withLoader", ["delAcc"]);
     },
   },
 
