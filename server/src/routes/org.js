@@ -26,6 +26,8 @@ router.post(
   express.json(),
 
   asyncWrap(async (req, res) => {
+    // @todo Check that orgID is valid, e.g. no space
+
     // Check to ensure org ID is available
     const snapshot = await fs
       .collection("orgs")

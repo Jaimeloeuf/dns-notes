@@ -130,6 +130,22 @@
             </div>
 
             <div class="column is-full">
+              <label>
+                <b>Organization Name</b>
+
+                <input
+                  v-autofocus
+                  type="text"
+                  v-model="orgName"
+                  placeholder="E.g. Google / FaceBook / Your Company's Name"
+                  required
+                  class="input"
+                  style="width: 100%"
+                />
+              </label>
+            </div>
+
+            <div class="column is-full">
               Your Email: <b>{{ email }}</b>
             </div>
 
@@ -228,6 +244,8 @@ export default {
       tab: undefined,
 
       orgID: undefined,
+      orgName: undefined,
+
       admin: false,
     };
   },
@@ -273,7 +291,15 @@ export default {
 
     async request() {},
 
-    async create() {},
+    async create() {
+      await this.$store.dispatch("withLoader", [
+        "createOrg",
+        { org: this.orgID, name: this.orgName },
+      ]);
+
+      // Redirect to actual home page once org is created successfully
+      this.$router.replace({ name: "home" });
+    },
 
     async delAcc() {
       this.$store.dispatch("withLoader", ["delAcc"]);

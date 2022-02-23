@@ -94,6 +94,7 @@ export default createStore({
     inviteBulk: lazilyLoad(() => import("./actions/inviteBulk.js")),
     leaveOrg: lazilyLoad(() => import("./actions/leaveOrg.js")),
     delAcc: lazilyLoad(() => import("./actions/delAcc.js")),
+    createOrg: lazilyLoad(() => import("./actions/createOrg.js")),
 
     /* Actions for POSTing updates to API */
     newNote: errorHandlingWrapper(newNote),
