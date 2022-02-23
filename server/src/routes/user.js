@@ -10,7 +10,7 @@ const router = express.Router();
 const unixseconds = require("unixseconds");
 const { asyncWrap } = require("express-error-middlewares");
 const authzMW = require("firebase-auth-express-middleware").authz;
-const fs = require("@enkeldigital/firebase-admin").fs;
+const { fs, auth } = require("@enkeldigital/firebase-admin");
 
 /**
  * API for admins to invite new users
@@ -186,6 +186,30 @@ router.post(
       admin: undefined,
       org: undefined,
     })(req.authenticatedUser.email);
+
+    // @todo Update DB as needed
+    // req.authenticatedUser.org;
+
+    res.status(200).json({});
+  })
+);
+
+/**
+ * API for users to delete their account
+ * @name POST /user/account/delete
+ */
+router.post(
+  "/account/delete",
+
+  // Ensure user does not belong to any organization
+  // Must leave org first before deleting account
+  authzMW((token) => token.org === undefined),
+
+  asyncWrap(async (req, res) => {
+    // Delete user from firebase auth
+    await auth
+      .getUserByEmail(req.authenticatedUser.email)
+      .then(({ uid }) => auth.deleteUser(uid));
 
     // @todo Update DB as needed
     // req.authenticatedUser.org;
