@@ -33,3 +33,7 @@ pids
 
 # Firebase service account key
 serviceAccountKey.json
+
+############### TypeScript stuff ###############
+tsconfig.tsbuildinfo
+dist/
