@@ -5,12 +5,14 @@
  * @module User APIs
  */
 
-const express = require("express");
+import express from "express";
+import unixseconds from "unixseconds";
+import { asyncWrap } from "express-error-middlewares";
+import { authz as authzMW } from "firebase-auth-express-middleware";
+import { fs, auth } from "@enkeldigital/firebase-admin";
+import type { UserInvite, UserInviteDoc } from "../../../shared-types/user";
+
 const router = express.Router();
-const unixseconds = require("unixseconds");
-const { asyncWrap } = require("express-error-middlewares");
-const authzMW = require("firebase-auth-express-middleware").authz;
-const { fs, auth } = require("@enkeldigital/firebase-admin");
 
 /**
  * API for admins to invite new users
@@ -41,7 +43,7 @@ router.post(
     // @todo Use auth API to check if user account already exists first
 
     // @todo Ensure users can only be invited to join 1 org at a time
-    const inviteUser = (user) =>
+    const inviteUser = (user: UserInvite) =>
       fs.collection("user-invites").add({ ...user, org, invitedBy, time });
 
     // @todo Send invitation email to the user asking them to login directly
@@ -73,9 +75,9 @@ router.get(
       .then((snap) =>
         snap.empty
           ? res.status(404).json({})
-          : res
-              .status(200)
-              .json({ invite: { id: snap.docs[0].id, ...snap.docs[0].data() } })
+          : res.status(200).json({
+              invite: { id: snap.docs[0]?.id, ...snap.docs[0]?.data() },
+            })
       )
   )
 );
@@ -90,7 +92,11 @@ router.post(
   asyncWrap(async (req, res) => {
     const docRef = fs.collection("user-invites").doc(req.params.invitationID);
 
-    const invitation = await docRef.get().then((doc) => doc.data());
+    const docSnapshot = await docRef.get();
+    if (!docSnapshot.exists)
+      return res.status(400).json({ error: "Invalid invitation ID" });
+
+    const invitation = docSnapshot.data() as UserInviteDoc;
 
     // Set claims for user account
     const claims = require("../utils/claims.js");
