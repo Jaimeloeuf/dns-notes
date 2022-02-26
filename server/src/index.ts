@@ -1,9 +1,10 @@
 // Setup environment variables
 require("dotenv").config();
 
-// setup app
-const app = require("express")();
-const { _404, _500 } = require("express-error-middlewares");
+import express from "express";
+import { _404, _500 } from "express-error-middlewares";
+
+const app = express();
 
 // Only allow the main domain for production use and localhost for development
 app.use(require("cors")({ origin: "*" }));
@@ -12,7 +13,7 @@ app.use(require("cors")({ origin: "*" }));
 app.use(require("helmet")());
 
 // Base URL and also the Health probe to check if server is up without running any other logic
-app.get("/", (req, res) => res.status(200).send("DNS Notes API"));
+app.get("/", (_, res) => res.status(200).send("DNS Notes API"));
 
 // Authentication Middleware applied for all routes defined after this line
 app.use(
@@ -30,8 +31,6 @@ app.use("/error", require("./routes/error.js"));
 app.use(_404);
 app.use(_500);
 
-/**
- * @notice Setup PORT last to ensure all setup is done before server starts listening to traffic
- */
+// Setup PORT last to ensure all setup is done before server starts listening to traffic
 const port = process.env.PORT || 3000; // Defaults to PORT 3000
 app.listen(port, () => console.log(`Server running on port: ${port}`));

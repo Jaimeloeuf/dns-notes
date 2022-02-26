@@ -15,18 +15,19 @@
   "author": "JJ",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "@enkeldigital/firebase-admin": "^0.3.1",
+    "@enkeldigital/firebase-admin": "^0.3.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
-    "express": "^4.17.2",
-    "express-error-middlewares": "^1.0.0",
+    "express": "^4.17.3",
+    "express-error-middlewares": "^1.0.3",
     "firebase-admin": "^10.0.2",
-    "firebase-auth-express-middleware": "^1.0.4",
+    "firebase-auth-express-middleware": "^1.0.7",
     "helmet": "^5.0.2",
-    "unixseconds": "^0.1.0"
+    "unixseconds": "^0.1.1"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
+    "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.21",
     "concurrently": "^7.0.0",
