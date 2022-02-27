@@ -1,14 +1,8 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
 
-  // All TS/JS source files should be in src/
-  // types/ folder in TS project root directory included too for any custom type definitions
-  "include": ["src/**/*", "types"],
-
-  // Add type roots to specify custom type dir in repo
-  // The original type roots of node_modules/@types must also be added in as setting this override default values
-  // https://stackoverflow.com/questions/65848442/property-user-does-not-exist-on-type-requestparamsdictionary-any-any-pars
-  "typeRoots": ["types", "node_modules/@types"],
+  // All TS/JS files should be in src/
+  "include": ["src/**/*"],
 
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
