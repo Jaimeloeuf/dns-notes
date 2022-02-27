@@ -2,13 +2,14 @@
  * API for error reporting
  * Mounted on /error
  * @author JJ
- * @module Note APIs
+ * @module Error APIs
  */
 
-const express = require("express");
+import express from "express";
+import unixseconds from "unixseconds";
+import { asyncWrap } from "express-error-middlewares";
+
 const router = express.Router();
-const unixseconds = require("unixseconds");
-const { asyncWrap } = require("express-error-middlewares");
 
 /**
  * API to receive error messages
@@ -18,12 +19,10 @@ router.post(
   "/",
 
   // @todo Rate limit this API with a middleware
-  (req, res, next) => {
-    // res.status(429).json({});
-    next();
-  },
+  // (req, res, next) => {
+  //   res.status(429).json({});
+  // },
 
-  // Only parse request body if user authorized to access API
   express.json(),
 
   asyncWrap(async (req, res) => {
