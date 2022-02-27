@@ -5,12 +5,14 @@
  * @module Note APIs
  */
 
-const express = require("express");
+import express from "express";
+import unixseconds from "unixseconds";
+import { asyncWrap } from "express-error-middlewares";
+import { authz as authzMW } from "firebase-auth-express-middleware";
+import { fs } from "@enkeldigital/firebase-admin";
+import type { SyncEvent } from "../../../shared-types/event";
+
 const router = express.Router();
-const unixseconds = require("unixseconds");
-const { asyncWrap } = require("express-error-middlewares");
-const authzMW = require("firebase-auth-express-middleware").authz;
-const { fs } = require("@enkeldigital/firebase-admin");
 
 /**
  * API to get all notes of an org as an object
@@ -38,7 +40,7 @@ router.get(
  * @param {String} orgID orgID of the user found on their JWT
  * @param {String} lastSync unix seconds in string to be parsed into a Int
  */
-const getEvents = async (orgID, lastSync) =>
+const getEvents = async (orgID: string, lastSync: string) =>
   fs
     .collection("events")
     .where("org", "==", orgID)
@@ -58,7 +60,9 @@ router.get(
   authzMW((token, req) => req.params.orgID === token.org),
 
   asyncWrap(async (req, res) =>
-    res.status(200).json(await getEvents(req.params.orgID, req.params.lastSync))
+    res
+      .status(200)
+      .json(await getEvents(req.params.orgID!, req.params.lastSync!))
   )
 );
 
@@ -82,7 +86,7 @@ router.post(
   },
 
   asyncWrap(async (req, res) => {
-    const { event } = req.body;
+    const { event }: { event: SyncEvent } = req.body;
 
     // Set a time field on the event object directly based on server's current time to sort events by time
     // Although a note object already have a time field, it is time of note creation,
@@ -145,7 +149,7 @@ router.post(
 
         return res
           .status(201)
-          .json(await getEvents(req.params.orgID, req.params.lastSync));
+          .json(await getEvents(req.params.orgID!, req.params.lastSync!));
 
       case "del":
         // Delete note from notes store
@@ -156,7 +160,7 @@ router.post(
 
         return res
           .status(200)
-          .json(await getEvents(req.params.orgID, req.params.lastSync));
+          .json(await getEvents(req.params.orgID!, req.params.lastSync!));
 
       case "edit":
         // @todo Check to ensure that user did not change the id of the note??? maybe should have a seperate noteID field?
@@ -169,12 +173,25 @@ router.post(
 
         return res
           .status(200)
-          .json(await getEvents(req.params.orgID, req.params.lastSync));
+          .json(await getEvents(req.params.orgID!, req.params.lastSync!));
 
       default:
-        return res.status(400).json({
-          error: `Invalid event type '${event.type}' sent to sync API`,
+        /*
+          Using ts-ignore to allow using the .type even tho it should all be handled,
+          But since the API accepts user requests, it is not guaranteed that the type value will be correct.
+          @todo This should be skipped once request body have been validated against the type definitions
+        */
+        res.status(400).json({
+          error: `Invalid event type '${
+            // @ts-ignore
+            event.type
+          }' sent to sync API`,
         });
+        throw new UnexhaustiveCaseError(
+          event,
+          // @ts-ignore
+          event.type
+        );
     }
   })
 );
