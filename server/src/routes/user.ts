@@ -90,7 +90,7 @@ router.post(
   "/invite/accept/:invitationID",
 
   asyncWrap(async (req, res) => {
-    const docRef = fs.collection("user-invites").doc(req.params.invitationID);
+    const docRef = fs.collection("user-invites").doc(req.params.invitationID!);
 
     const docSnapshot = await docRef.get();
     if (!docSnapshot.exists)
@@ -111,7 +111,7 @@ router.post(
     // Delete the invite after user setup is complete
     await docRef.delete();
 
-    res.status(200).json({});
+    return res.status(200).json({});
   })
 );
 
@@ -126,7 +126,7 @@ router.post(
     // @todo Notify admin that invited this user
 
     // Delete invite from firestore to "reject"
-    await fs.collection("user-invites").doc(req.params.invitationID).delete();
+    await fs.collection("user-invites").doc(req.params.invitationID!).delete();
 
     res.status(200).json({});
   })
@@ -171,7 +171,7 @@ router.post(
 
     // @todo Email all admins of selected org to ask for their permissions
 
-    res.status(201).json({ id });
+    return res.status(201).json({ id });
   })
 );
 
