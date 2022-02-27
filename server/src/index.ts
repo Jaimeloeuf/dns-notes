@@ -1,6 +1,8 @@
 // Setup environment variables
 require("dotenv").config();
 
+import "./UnexhaustiveCaseError";
+
 import express from "express";
 import { _404, _500 } from "express-error-middlewares";
 
