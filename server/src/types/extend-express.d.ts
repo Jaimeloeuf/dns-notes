@@ -12,6 +12,7 @@ declare global {
       // Could be a generic Record type but since the set of properties and custom claims expected,
       // is more or less fixed, they are manually typed out instead
       authenticatedUser: {
+        uid: string;
         email: string;
         org: string;
 

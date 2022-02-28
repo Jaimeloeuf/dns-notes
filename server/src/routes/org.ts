@@ -5,12 +5,13 @@
  * @module Organization management APIs
  */
 
-const express = require("express");
+import express from "express";
+import unixseconds from "unixseconds";
+import { asyncWrap } from "express-error-middlewares";
+import { authz as authzMW } from "firebase-auth-express-middleware";
+import { fs } from "@enkeldigital/firebase-admin";
+
 const router = express.Router();
-const unixseconds = require("unixseconds");
-const { asyncWrap } = require("express-error-middlewares");
-const authzMW = require("firebase-auth-express-middleware").authz;
-const fs = require("@enkeldigital/firebase-admin").fs;
 
 /**
  * API to create a new organization
@@ -27,6 +28,7 @@ router.post(
 
   asyncWrap(async (req, res) => {
     // @todo Check that orgID is valid, e.g. no space
+    // @todo Add type definition to the request body object
 
     // Check to ensure org ID is available
     const snapshot = await fs
@@ -53,7 +55,7 @@ router.post(
       admin: true,
     })(req.authenticatedUser.uid);
 
-    res.status(200).json({});
+    return res.status(200).json({});
   })
 );
 
