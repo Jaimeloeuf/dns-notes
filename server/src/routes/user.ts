@@ -5,12 +5,22 @@
  * @module User APIs
  */
 
-import express from "express";
+import express, { RequestHandler } from "express";
 import unixseconds from "unixseconds";
 import { asyncWrap } from "express-error-middlewares";
 import { authz as authzMW } from "firebase-auth-express-middleware";
 import { fs, auth } from "@enkeldigital/firebase-admin";
 import type { UserInvite, UserInviteDoc } from "../../../shared-types/user";
+
+import { UserInvite_schema } from "./ajv_schema";
+import Ajv from "ajv";
+const ajv = new Ajv();
+
+function validateBody(schema: object): RequestHandler {
+  const validate = ajv.compile(schema);
+  return (req, res, next) =>
+    validate(req.body) ? next() : res.status(400).json(validate.errors);
+}
 
 const router = express.Router();
 
@@ -29,6 +39,8 @@ router.post(
 
   // Only parse request body if user authorized to access API
   express.json(),
+
+  validateBody(UserInvite_schema),
 
   // Since user account is not created yet, store the properties in FS first
   // Then on first login, call API to set claims
