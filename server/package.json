@@ -6,6 +6,7 @@
     "docker:build": "docker build -t gcr.io/dns-notes/api -f ./.Dockerfile .",
     "docker:push": "docker push gcr.io/dns-notes/api",
     "deploy": "npm run docker:build && npm run docker:push",
+    "ajv:schema": "node ./scripts/generateAjvSchema.js",
     "build": "npx tsc",
     "build:watch": "npx tsc -w",
     "serve:watch": "npx nodemon ./dist/index.js",
@@ -16,6 +17,7 @@
   "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@enkeldigital/firebase-admin": "^0.3.2",
+    "ajv": "^8.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
@@ -32,6 +34,7 @@
     "@types/node": "^17.0.21",
     "concurrently": "^7.0.0",
     "nodemon": "^2.0.15",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "typescript-json-schema": "^0.53.0"
   }
 }
