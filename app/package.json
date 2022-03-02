@@ -10,17 +10,17 @@
   },
   "dependencies": {
     "bulma": "^0.9.3",
-    "firebase": "^9.6.4",
+    "firebase": "^9.6.7",
     "fuse.js": "^6.5.3",
-    "simpler-fetch": "^6.1.0",
-    "unixseconds": "^0.1.0",
-    "vue": "^3.2.16",
-    "vue-router": "^4.0.12",
+    "simpler-fetch": "^6.1.1",
+    "unixseconds": "^0.1.1",
+    "vue": "^3.2.31",
+    "vue-router": "^4.0.13",
     "vuex": "^4.0.2",
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.9.3",
-    "vite": "^2.6.4"
+    "@vitejs/plugin-vue": "^2.2.4",
+    "vite": "^2.8.6"
   }
 }
