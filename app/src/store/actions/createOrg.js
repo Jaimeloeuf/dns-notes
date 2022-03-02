@@ -23,9 +23,9 @@ export default errorHandlingWrapper(async function createOrg({ commit }, org) {
 
   // Get orgID, email and admin status from the JWT to set it into store
   const {
-    claims: { org, email, admin },
+    claims: { org: orgID, email, admin },
   } = await auth.currentUser.getIdTokenResult();
-  commit("setter", ["org", org]);
+  commit("setter", ["org", orgID]);
   commit("setter", ["email", email]);
   commit("setter", ["admin", admin]);
 });
