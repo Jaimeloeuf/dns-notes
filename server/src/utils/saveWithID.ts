@@ -1,3 +1,5 @@
+import { Firestore } from "firebase-admin/firestore";
+
 /**
  * Works like firestore.add(), but with the firestore doc ID set on the object itself,
  * and have the update value returned to you.
@@ -9,7 +11,11 @@
  * @param {object} value Whatever object value you want to save into that collection
  * @returns An updated copy of the value object you passed in with the firestore doc id set on it
  */
-module.exports = async function saveWithID(fs, collection, value) {
+export default async function saveWithID(
+  fs: Firestore,
+  collection: string,
+  value: Record<string, any>
+) {
   // https://firebase.google.com/docs/firestore/manage-data/add-data#node.js_6
   const ref = fs.collection(collection).doc();
   const { id } = ref;
@@ -21,4 +27,4 @@ module.exports = async function saveWithID(fs, collection, value) {
 
   // Return the modified value
   return value;
-};
+}
