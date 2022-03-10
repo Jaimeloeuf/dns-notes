@@ -36,3 +36,5 @@ app.use(_500);
 // Setup PORT last to ensure all setup is done before server starts listening to traffic
 const port = process.env.PORT || 3000; // Defaults to PORT 3000
 app.listen(port, () => console.log(`Server running on port: ${port}`));
+
+process.on("uncaughtException", (e) => console.error("Uncaught Exception!", e));
