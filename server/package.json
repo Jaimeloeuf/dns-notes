@@ -24,7 +24,7 @@
     "express": "^4.17.3",
     "express-error-middlewares": "^1.0.3",
     "firebase-admin": "^10.0.2",
-    "firebase-auth-express-middleware": "^1.0.7",
+    "firebase-auth-express-middleware": "^1.0.8",
     "helmet": "^5.0.2",
     "unixseconds": "^0.1.1"
   },
